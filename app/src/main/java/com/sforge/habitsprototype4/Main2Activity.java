@@ -377,8 +377,6 @@ public class Main2Activity extends AppCompatActivity {
                     mcv.addDecorators(invalidateSelectionEventDecorator);
                     activityReload();
                 }
-                System.out.println("Ahoj");
-
                 Log.d("decorator", selectedDays.toString());
             }
         });
