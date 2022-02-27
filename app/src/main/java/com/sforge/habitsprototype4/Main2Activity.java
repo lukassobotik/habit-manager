@@ -121,7 +121,7 @@ public class Main2Activity extends AppCompatActivity {
         navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
             @Override
             public void onDestinationChanged(@NonNull NavController navController, @NonNull NavDestination navDestination, @Nullable Bundle bundle) {
-                if(disabled == false) {
+                if(!disabled) {
                     if (String.valueOf(navDestination).equals("Destination(com.sforge.habitsprototype4:id/nav_home) label=Home class=com.sforge.habitsprototype4.ui.home.HomeFragment")) {
                         activityReload();
                     }
@@ -288,8 +288,7 @@ public class Main2Activity extends AppCompatActivity {
     }
     public void storeCalendarDataInArrays(){
         Cursor cursor = myDB2.readAllData();
-        if (cursor.getCount() == 0) {
-        } else {
+        if (cursor.getCount() != 0) {
             while (cursor.moveToNext()) {
                 db_calendar_id.add(cursor.getString(0));
                 db_calendar_date.add(cursor.getString(1));
@@ -378,6 +377,8 @@ public class Main2Activity extends AppCompatActivity {
                     mcv.addDecorators(invalidateSelectionEventDecorator);
                     activityReload();
                 }
+                System.out.println("Ahoj");
+
                 Log.d("decorator", selectedDays.toString());
             }
         });
