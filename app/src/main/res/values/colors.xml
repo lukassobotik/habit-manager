@@ -9,10 +9,21 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="dark_blue">#0606CF</color>
-    <color name="dark_grey">#2B2B2B</color>
-    <color name="dark_grey_bg">#121212</color>
     <color name="white">#FFFFFFFF</color>
     <color name="transparent">#00000000</color>
     <color name="lighter_transparent">#40000000</color>
     <color name="darker_transparent">#50000000</color>
+
+    <!--Dark theme Colors-->
+    <color name="dark_grey">#2B2B2B</color>
+    <color name="dark_grey_bg">#121212</color>
+    <color name="dark_on_primary">#000000</color>
+    <color name="dark_on_secondary">#000000</color>
+    <color name="dark_on_background">#FFFFFF</color>
+    <color name="dark_on_surface">#FFFFFF</color>
+
+    <color name="color_primary">#285AFA</color>
+
+    <!--Light theme Colors-->
+
 </resources>

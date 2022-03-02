@@ -2,22 +2,31 @@
     <!-- Base application theme. -->
     <style name="Theme.HabitsPrototype4" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/dark_blue</item>
-        <item name="colorPrimaryVariant">@color/dark_blue</item>
-        <item name="colorOnPrimary">@color/dark_blue</item>
+        <item name="colorPrimary">@color/color_primary</item>
+        <item name="colorPrimaryVariant">@color/dark_grey</item>
+        <item name="colorOnPrimary">@color/dark_on_primary</item>
+        <item name="colorOnBackground">@color/dark_on_background</item>
+        <item name="colorOnSurface">@color/dark_on_surface</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/dark_blue</item>
-        <item name="colorSecondaryVariant">@color/dark_blue</item>
-        <item name="colorOnSecondary">@color/black</item>
+        <item name="colorSecondary">@color/color_primary</item>
+        <item name="colorSecondaryVariant">@color/color_primary</item>
+        <item name="colorOnSecondary">@color/dark_on_secondary</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
-        <item name="android:itemBackground">@color/dark_grey_bg</item>
+        <item name="android:itemBackground">@color/dark_grey</item>
     </style>
 
     <style name="Theme.AppCompat.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+    </style>
+    <style name="habitCardView">
+        <item name="android:background">@drawable/layout_bg</item>
+        <item name="android:backgroundTint">@color/dark_grey</item>
+    </style>
+    <style name="theme_text">
+        <item name="android:textColor">@color/dark_on_background</item>
     </style>
 
     <style name="Theme.HabitsPrototype4.PopupOverlay" parent="ThemeOverlay.AppCompat.DayNight"/>

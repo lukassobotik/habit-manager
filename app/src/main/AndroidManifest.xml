@@ -14,7 +14,7 @@
             android:name=".UpdateActivity"
             android:exported="false"
             android:label="Update a Habit"
-            android:parentActivityName=".Main2Activity"/>
+            android:parentActivityName=".Main2Activity" />
         <activity
             android:name=".AddActivity"
             android:exported="false"
@@ -24,7 +24,8 @@
             android:name=".ui.settings.SettingActivity"
             android:exported="false"
             android:label="Settings"
-            android:parentActivityName=".Main2Activity" />
+            android:parentActivityName=".Main2Activity"
+            android:theme="@style/Theme.HabitsPrototype4" />
         <activity
             android:name=".Main2Activity"
             android:exported="true"

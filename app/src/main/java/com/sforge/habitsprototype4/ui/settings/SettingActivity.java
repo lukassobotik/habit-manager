@@ -14,6 +14,7 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.sforge.habitsprototype4.Main2Activity;
 import com.sforge.habitsprototype4.R;
 
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -116,7 +117,6 @@ public class SettingActivity extends AppCompatActivity {
                     Log.d("fdof", settings.getFDOF_Setting());
                 }
                 applySettings();
-                Toast.makeText(SettingActivity.this,"To apply the changes You have to restart the application", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -126,26 +126,28 @@ public class SettingActivity extends AppCompatActivity {
         final int white = ContextCompat.getColor(this, R.color.white);
 
         if(settings.getCustomTheme().equals(UserSettings.DARK_THEME)){
-            titleTV.setTextColor(white);
-            themeDesc.setTextColor(white);
-            themeTV.setTextColor(white);
+            getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            //titleTV.setTextColor(white);
+            //themeDesc.setTextColor(white);
+            //themeTV.setTextColor(white);
             themeTV.setText("Dark");
-            parentView.setBackgroundColor(black);
+           // parentView.setBackgroundColor(black);
             themeSwitch.setChecked(true);
-            fdofTV.setTextColor(white);
-            fdofDesc.setTextColor(white);
-            fdofTitleTV.setTextColor(white);
+            //fdofTV.setTextColor(white);
+            //fdofDesc.setTextColor(white);
+            //fdofTitleTV.setTextColor(white);
         }
         else{
-            titleTV.setTextColor(black);
-            themeDesc.setTextColor(black);
-            themeTV.setTextColor(black);
+            getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            //titleTV.setTextColor(black);
+            //themeDesc.setTextColor(black);
+            //themeTV.setTextColor(black);
             themeTV.setText("Light");
-            parentView.setBackgroundColor(white);
+            //parentView.setBackgroundColor(white);
             themeSwitch.setChecked(false);
-            fdofTV.setTextColor(black);
-            fdofDesc.setTextColor(black);
-            fdofTitleTV.setTextColor(black);
+            //fdofTV.setTextColor(black);
+            //fdofDesc.setTextColor(black);
+            //fdofTitleTV.setTextColor(black);
         }
 
         if(settings.getFDOF_Setting().equals(UserSettings.FDOF_MONDAY)){

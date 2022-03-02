@@ -1,14 +1,23 @@
 package com.sforge.habitsprototype4;
 
+import static com.sforge.habitsprototype4.R.color.dark_grey_bg;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.LightingColorFilter;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.prolificinteractive.materialcalendarview.*;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -17,8 +26,10 @@ import com.google.android.material.navigation.NavigationView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
@@ -31,6 +42,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.sforge.habitsprototype4.databinding.ActivityMain2Binding;
+import com.sforge.habitsprototype4.ui.gallery.GalleryFragment;
 import com.sforge.habitsprototype4.ui.settings.SettingActivity;
 import com.sforge.habitsprototype4.ui.settings.UserSettings;
 
@@ -47,6 +59,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import maes.tech.intentanim.CustomIntent;
 
 public class Main2Activity extends AppCompatActivity {
     private UserSettings settings;
@@ -69,7 +83,9 @@ public class Main2Activity extends AppCompatActivity {
 
     String theme = "black";
     String fdof;
+    CardView cardView;
 
+    MaterialCalendarView mcv;
     final boolean[] weekMode = {false};
     boolean disabled = false;
 
@@ -88,7 +104,6 @@ public class Main2Activity extends AppCompatActivity {
 
         findIDs();
         databaseHelper();
-
     }
 
     public void createActivityViews(){
@@ -121,6 +136,7 @@ public class Main2Activity extends AppCompatActivity {
         navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
             @Override
             public void onDestinationChanged(@NonNull NavController navController, @NonNull NavDestination navDestination, @Nullable Bundle bundle) {
+                Log.d("navDestination", String.valueOf(navDestination));
                 if(!disabled) {
                     if (String.valueOf(navDestination).equals("Destination(com.sforge.habitsprototype4:id/nav_home) label=Home class=com.sforge.habitsprototype4.ui.home.HomeFragment")) {
                         activityReload();
@@ -183,6 +199,7 @@ public class Main2Activity extends AppCompatActivity {
         menu_settings = findViewById(R.id.action_settings);
         habit_item = findViewById(R.id.habit_item);
         home_constraint = findViewById(R.id.home_constraint);
+        cardView = findViewById(R.id.habitCardView);
     }
 
     @Override
@@ -212,6 +229,7 @@ public class Main2Activity extends AppCompatActivity {
     public void activityReload(){
         Intent intent = new Intent(Main2Activity.this, Main2Activity.class);
         startActivity(intent);
+        CustomIntent.customType(Main2Activity.this,"fadein-to-fadeout");
         finish();
     }
 
@@ -229,8 +247,7 @@ public class Main2Activity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
-    private void loadSharedPreferences()
-    {
+    private void loadSharedPreferences(){
         settings = (UserSettings) getApplication();
         SharedPreferences sharedPreferences = getSharedPreferences(UserSettings.PREFERENCES, MODE_PRIVATE);
         String pref = sharedPreferences.getString(UserSettings.CUSTOM_THEME, UserSettings.LIGHT_THEME);
@@ -248,8 +265,10 @@ public class Main2Activity extends AppCompatActivity {
         Log.d("fdof", "Main2Activity: " + fdof);
         settings.setFDOF_Setting(fdof);
     }
+    @SuppressLint({"UseCompatLoadingForDrawables"})
+    @SuppressWarnings("deprecation")
     public void updateTheme(){
-        MaterialCalendarView mcv = findViewById(R.id.calendarView);
+        mcv = findViewById(R.id.calendarView);
         final int black = ContextCompat.getColor(this, R.color.black);
         final int white = ContextCompat.getColor(this, R.color.white);
 
@@ -272,12 +291,13 @@ public class Main2Activity extends AppCompatActivity {
     }
 
     public void loadCalendarPreferences(){
-        MaterialCalendarView mcv = findViewById(R.id.calendarView);
+        mcv = findViewById(R.id.calendarView);
         if(fdof.equals("monday"))
             mcv.state().edit().setFirstDayOfWeek(Calendar.MONDAY).commit();
         else if (fdof.equals("sunday"))
             mcv.state().edit().setFirstDayOfWeek(Calendar.SUNDAY).commit();
     }
+
     public void calendarDatabaseHelper(){
         myDB2 = new MyDatabaseHelper2(Main2Activity.this);
         db_calendar_id = new ArrayList<>();
@@ -299,7 +319,22 @@ public class Main2Activity extends AppCompatActivity {
 
     @SuppressWarnings("all")
     private void addCalendarEvents(){
-        MaterialCalendarView mcv = findViewById(R.id.calendarView);
+        mcv = findViewById(R.id.calendarView);
+
+        GalleryFragment galleryFragment = new GalleryFragment();
+        View view = galleryFragment.getView();
+
+        if(view != null){
+            MaterialCalendarView mmcv = (MaterialCalendarView) view.findViewById(R.id.monthCalendarView);
+            mmcv.state().edit().setShowWeekDays(false).commit();
+            Log.d("bug_fixing", "mmcv");
+        }
+
+        View root = galleryFragment.returnRoot();
+        if(root != null){
+            Log.d("bug_fixing", "root isn't null");
+        }
+
         final String NONE = "none";
         final String DONE = "done";
         final String FAIL = "fail";
@@ -307,6 +342,9 @@ public class Main2Activity extends AppCompatActivity {
 
         ArrayList<CalendarDay> selectedDays = new ArrayList<>();
         ArrayList<CalendarDay> loadedDays = new ArrayList<>();
+        ArrayList<CalendarDay> calDay_calendar_date = new ArrayList<>();
+        ArrayList<CalendarDay> invalidateDays = new ArrayList<>();
+        ArrayList<String> calendar_data;
         //mcv.setSelectedDate(selectedDay);
 
         mcv.setSelectionMode(MaterialCalendarView.SELECTION_MODE_MULTIPLE);
@@ -332,52 +370,59 @@ public class Main2Activity extends AppCompatActivity {
 
                 Log.d("decorator", "dateDays: " + String.valueOf(dateDays));
 
+                for(int i = 0; i < db_calendar_date.size(); i++){
+                    String edit = db_calendar_date.get(i);
+                    SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzzzzzzzz yyyy");
+                    try{
+                        Date selDate = formatter.parse(edit);
+                        CalendarDay calSelDay = CalendarDay.from(selDate);
+                        calDay_calendar_date.add(calSelDay);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                storeCalendarDataInArrays();
+
                 MyDatabaseHelper2 MyDB2 = new MyDatabaseHelper2(Main2Activity.this);
-                selectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.dark_blue), dateDays);
+                selectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.color_primary), dateDays);
                 invalidateSelectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.transparent), dateDays);
 
-                loadCalendarDays();
-                storeCalendarDataInArrays();
+
+                CalendarDay calendarDayDate;
 
                 Log.d("decorator", String.valueOf(db_calendar_date));
 
                 if(!db_calendar_date.contains(stringDateInfo)){
                     Log.d("decorator", "false");
-                    //selectedDays.add(date);
-                    //mcv.addDecorators(eventDecorator);
                     mcv.addDecorators(selectionEventDecorator);
                     status = DONE;
                     Log.d("decorator", "Status: " + status.toString());
                     MyDB2.addHabit(String.valueOf(dateInfo).trim(), //date
                                    status.toString().trim()); //status
-
                 }
                 else if(db_calendar_date.contains(stringDateInfo)){
-                    db_calendar_date.remove(stringDateInfo);
+                    mcv.clearSelection();
+                    Log.d("calendar_fixes", String.valueOf(db_calendar_date));
                     for(int i = 0; i < db_calendar_date.size(); i++){
                         String edit = db_calendar_date.get(i);
                         SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzzzzzzzz yyyy");
                         try {
                             Date calendar_date = formatter.parse(edit);
-                            CalendarDay calendarDayDate = CalendarDay.from(calendar_date);
+                            calendarDayDate = CalendarDay.from(calendar_date);
                             if(String.valueOf(calendarDayDate).equals(String.valueOf(date))){
                                 Log.d("decorator", "remove: " + edit);
+                                db_calendar_date.remove(date);
                                 String delete_row_id = db_calendar_id.get(i);
                                 myDB2.deleteOneRow(delete_row_id);
                                 Log.d("decorator", "remove: " + String.valueOf(delete_row_id));
-                            }
-                            else{
-                                Log.d("decorator", "remove info: " + "calendarDayDate: " + String.valueOf(calendarDayDate));
-                                Log.d("decorator", "remove info: " + "date: " + String.valueOf(date.toString()));
                             }
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
                     }
-                    mcv.addDecorators(invalidateSelectionEventDecorator);
-                    activityReload();
                 }
-                Log.d("decorator", selectedDays.toString());
+                mcv.addDecorators(invalidateSelectionEventDecorator);
             }
         });
 
@@ -387,17 +432,17 @@ public class Main2Activity extends AppCompatActivity {
                 Log.d("decorator", String.valueOf(weekMode[0]));
                 if(weekMode[0] == true){
                     weekMode[0] = false;
-                    mcv.state().edit().setCalendarDisplayMode(CalendarMode.WEEKS).commit();
+                    mcv.state().edit().setCalendarDisplayMode(CalendarMode.WEEKS).setShowWeekDays(true).isCacheCalendarPositionEnabled(true).commit();
                 }
                 else if(weekMode[0] == false){
                     weekMode[0] = true;
-                    mcv.state().edit().setCalendarDisplayMode(CalendarMode.MONTHS).commit();
+                    mcv.state().edit().setCalendarDisplayMode(CalendarMode.MONTHS).setShowWeekDays(true).isCacheCalendarPositionEnabled(true).commit();
                 }
             }
         });
     }
     private void loadCalendarDays(){
-        MaterialCalendarView mcv = findViewById(R.id.calendarView);
+        mcv = findViewById(R.id.calendarView);
         for(int i = 0; i < db_calendar_date.size(); i++){
             String edit = db_calendar_date.get(i);
             @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat("E MMM dd HH:mm:ss zzzzzzzzz yyyy");
@@ -405,7 +450,7 @@ public class Main2Activity extends AppCompatActivity {
                 Date loadDate = formatter.parse(edit);
                 CalendarDay loadDates = CalendarDay.from(loadDate);
                 Collection<CalendarDay> previousDates = Collections.singleton(loadDates);
-                previousSelectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.dark_blue), previousDates);
+                previousSelectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.color_primary), previousDates);
                 mcv.addDecorators(previousSelectionEventDecorator);
             } catch (ParseException e) {
                 e.printStackTrace();

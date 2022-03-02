@@ -4,19 +4,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.gallery.GalleryFragment">
+    android:id="@+id/gallery_constraint"
+    tools:context=".Main2Activity"
+    android:padding="8dp">
 
     <TextView
-        android:id="@+id/text_gallery"
-        android:layout_width="match_parent"
+        android:id="@+id/textGallery"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"/>
+
+    <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+        style="@style/habitCardView"
+        android:id="@+id/monthCalendarView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:mcv_calendarMode="month"
+        app:mcv_firstDayOfWeek="monday"
+        app:mcv_selectionColor="@color/color_primary"
+        app:mcv_showOtherDates="all"
+        app:mcv_showWeekDays="true"
+        app:mcv_weekDayTextAppearance="@style/theme_text"
+        app:mcv_arrowColor="@color/color_primary" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
