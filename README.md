@@ -13,7 +13,22 @@ It is full of bugs and is not working as it should have
 
 
 # Changes:
- - ## v0.1.0
+- ## v0.1.1
+     - ### **_Changes_**
+       - **_UI Revamp_** is now also in **_Add Activity_** and **_Update Activtity_**
+       - New **_Logo_**
+       - Application will be called **_Repeaty_**
+       - Menu Items are **_Always_** Visible
+       - The calendar is now also functional in the **_Gallery Fragment_**
+       - Buttons to **_Add_** or **_Remove_** a habit are now in the **_Action Bar_**
+       - To add repetition to a habit there are **_Buttons_** that **_Add_** it for **_You_**
+
+    - ### **_Bug Fixes_**
+      - Code **_Optimization_**
+      - When **_Entering_** the main Activity the Weekday Labels on the Calendar **_disappeared_**
+      - **_Selecting_** or **_Deselecting_** should now be more Optimized
+
+- ## v0.1.0
      - ### **_Changes_**
        - **_Full UI_** Revamp
        - Animated **_Restarting and Entering_** Activities
