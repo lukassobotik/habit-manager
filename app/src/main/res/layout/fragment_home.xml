@@ -16,6 +16,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:visibility="gone"/>
 
+    <!-- Preview is disabled because mcv_dateTextAppearance is defined in themes.xml -->
     <com.prolificinteractive.materialcalendarview.MaterialCalendarView
         style="@style/habitCardView"
         android:id="@+id/calendarView"

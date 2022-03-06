@@ -31,10 +31,9 @@ public class SettingActivity extends AppCompatActivity {
     private SwitchMaterial fdofSwitch;
     private TextView fdofTV, fdofTitleTV, fdofDesc;
 
-    Main2Activity main2Activity;
     private UserSettings settings;
 
-    public Intent i = new Intent(this, Main2Activity.class);
+   // public Intent i = new Intent(SettingActivity.this, Main2Activity.class);
     List<String>SettingList = new ArrayList<>();
     StringBuilder stringBuilder = new StringBuilder();
 
@@ -82,7 +81,9 @@ public class SettingActivity extends AppCompatActivity {
         Log.d("theme_preferences", "theme: " + theme);
         settings.setCustomTheme(theme);
 
-        String fdof = items.get(1);
+        String fdof = "monday";
+        if(items.size() > 1)
+            fdof = items.get(1);
         settings.setFDOF_Setting(fdof);
 
         updateView();
@@ -127,27 +128,13 @@ public class SettingActivity extends AppCompatActivity {
 
         if(settings.getCustomTheme().equals(UserSettings.DARK_THEME)){
             getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-            //titleTV.setTextColor(white);
-            //themeDesc.setTextColor(white);
-            //themeTV.setTextColor(white);
             themeTV.setText("Dark");
-           // parentView.setBackgroundColor(black);
             themeSwitch.setChecked(true);
-            //fdofTV.setTextColor(white);
-            //fdofDesc.setTextColor(white);
-            //fdofTitleTV.setTextColor(white);
         }
         else{
             getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-            //titleTV.setTextColor(black);
-            //themeDesc.setTextColor(black);
-            //themeTV.setTextColor(black);
             themeTV.setText("Light");
-            //parentView.setBackgroundColor(white);
             themeSwitch.setChecked(false);
-            //fdofTV.setTextColor(black);
-            //fdofDesc.setTextColor(black);
-            //fdofTitleTV.setTextColor(black);
         }
 
         if(settings.getFDOF_Setting().equals(UserSettings.FDOF_MONDAY)){
@@ -181,27 +168,5 @@ public class SettingActivity extends AppCompatActivity {
         //editor.putString("SETTING_LIST", stringBuilder.toString());
         //editor.apply();
 
-    }/*
-    public boolean removeAll(Collection list) {
-        boolean isModi = false;
-        Iterator ite= new Iterator() {
-            @Override
-            public boolean hasNext() {
-                return false;
-            }
-
-            @Override
-            public Object next() {
-                return null;
-            }
-        };
-        while (ite.hasNext()) {
-            if (list.contains(ite.next())) {
-                ite.remove();
-                isModi = true;
-            }
-        }
-        return isModi;
     }
-    */
 }

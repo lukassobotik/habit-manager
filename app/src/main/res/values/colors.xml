@@ -15,7 +15,7 @@
     <color name="darker_transparent">#50000000</color>
 
     <!--Dark theme Colors-->
-    <color name="dark_grey">#2B2B2B</color>
+    <color name="dark_grey">#272727</color>
     <color name="dark_grey_bg">#121212</color>
     <color name="dark_on_primary">#000000</color>
     <color name="dark_on_secondary">#000000</color>

@@ -1,55 +1,44 @@
 package com.sforge.habitsprototype4;
 
-import static com.sforge.habitsprototype4.R.color.dark_grey_bg;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.LightingColorFilter;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Menu;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
-import com.prolificinteractive.materialcalendarview.*;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.navigation.NavigationView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
-import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.CalendarMode;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 import com.sforge.habitsprototype4.databinding.ActivityMain2Binding;
 import com.sforge.habitsprototype4.ui.gallery.GalleryFragment;
 import com.sforge.habitsprototype4.ui.settings.SettingActivity;
 import com.sforge.habitsprototype4.ui.settings.UserSettings;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -64,10 +53,10 @@ import maes.tech.intentanim.CustomIntent;
 
 public class Main2Activity extends AppCompatActivity {
     private UserSettings settings;
-    private EventDecorator eventDecorator, previousEventDecorator;
-    private SelectionEventDecorator selectionEventDecorator, invalidateSelectionEventDecorator, previousSelectionEventDecorator;
+
+    private SelectionEventDecorator selectionEventDecorator;
+    private SelectionEventDecorator invalidateSelectionEventDecorator;
     private AppBarConfiguration mAppBarConfiguration;
-    private ActivityMain2Binding binding;
 
     RecyclerView recyclerView;
     FloatingActionButton add_button;
@@ -82,7 +71,7 @@ public class Main2Activity extends AppCompatActivity {
     CustomAdapter customAdapter;
 
     String theme = "black";
-    String fdof;
+    String fdof = "monday";
     CardView cardView;
 
     MaterialCalendarView mcv;
@@ -106,17 +95,14 @@ public class Main2Activity extends AppCompatActivity {
         databaseHelper();
     }
 
-    public void createActivityViews(){
-        binding = ActivityMain2Binding.inflate(getLayoutInflater());
+    public void createActivityViews() {
+        com.sforge.habitsprototype4.databinding.ActivityMain2Binding binding = ActivityMain2Binding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBarMain2.toolbar);
-        binding.appBarMain2.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Main2Activity.this, AddActivity.class);
-                startActivity(intent);
-            }
+        binding.appBarMain2.fab.setOnClickListener(view -> {
+            Intent intent = new Intent(Main2Activity.this, AddActivity.class);
+            startActivity(intent);
         });
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
@@ -131,21 +117,20 @@ public class Main2Activity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
     }
-    protected void onFragmentEnter(NavController navController){
 
-        navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
-            @Override
-            public void onDestinationChanged(@NonNull NavController navController, @NonNull NavDestination navDestination, @Nullable Bundle bundle) {
-                Log.d("navDestination", String.valueOf(navDestination));
-                if(!disabled) {
-                    if (String.valueOf(navDestination).equals("Destination(com.sforge.habitsprototype4:id/nav_home) label=Home class=com.sforge.habitsprototype4.ui.home.HomeFragment")) {
-                        activityReload();
-                    }
+    protected void onFragmentEnter(NavController navController) {
+
+        navController.addOnDestinationChangedListener((navController1, navDestination, bundle) -> {
+            Log.d("navDestination", String.valueOf(navDestination));
+            if (!disabled) {
+                if (String.valueOf(navDestination).equals("Destination(com.sforge.habitsprototype4:id/nav_home) label=Home class=com.sforge.habitsprototype4.ui.home.HomeFragment")) {
+                    activityReload();
                 }
             }
         });
     }
-    private void createActivity(){
+
+    private void createActivity() {
         disabled = true;
         createActivityViews();
         new Timer().schedule(new TimerTask() {
@@ -156,7 +141,22 @@ public class Main2Activity extends AppCompatActivity {
         }, 1000);
     }
 
-    public void databaseHelper(){
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mcv = findViewById(R.id.calendarView);
+        mcv.state().edit().setCalendarDisplayMode(CalendarMode.WEEKS).setShowWeekDays(true).isCacheCalendarPositionEnabled(true).commit();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            activityReload();
+        }
+    }
+
+    public void databaseHelper() {
         myDB = new MyDatabaseHelper(Main2Activity.this);
         db_id = new ArrayList<>();
         db_name = new ArrayList<>();
@@ -165,26 +165,18 @@ public class Main2Activity extends AppCompatActivity {
 
         storeHabitDataInArrays();
 
-        customAdapter = new CustomAdapter(Main2Activity.this,Main2Activity.this, db_id, db_name, db_tag, db_repeat);
+        customAdapter = new CustomAdapter(Main2Activity.this, Main2Activity.this, db_id, db_name, db_tag, db_repeat);
         recyclerView.setAdapter(customAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(Main2Activity.this));
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 1){
-            activityReload();
-        }
-    }
     @SuppressWarnings("all")
-    public void storeHabitDataInArrays(){
+    public void storeHabitDataInArrays() {
         Cursor cursor = myDB.readAllData();
-        if(cursor.getCount() == 0){
+        if (cursor.getCount() == 0) {
 
-        }
-        else {
-            while (cursor.moveToNext()){
+        } else {
+            while (cursor.moveToNext()) {
                 db_id.add(cursor.getString(0));
                 db_name.add(cursor.getString(1));
                 db_tag.add(cursor.getString(2));
@@ -193,7 +185,7 @@ public class Main2Activity extends AppCompatActivity {
         }
     }
 
-    public void findIDs(){
+    public void findIDs() {
         recyclerView = findViewById(R.id.recycler_view);
         add_button = findViewById(R.id.fab);
         menu_settings = findViewById(R.id.action_settings);
@@ -213,12 +205,12 @@ public class Main2Activity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
-        if(id == R.id.action_settings){
+        if (id == R.id.action_settings) {
             Log.d("options_menu", "settings");
             Intent intent = new Intent(Main2Activity.this, SettingActivity.class);
             startActivity(intent);
         }
-        if(id == R.id.action_reload){
+        if (id == R.id.action_reload) {
             Log.d("options_menu", "reload page");
             activityReload();
         }
@@ -226,10 +218,10 @@ public class Main2Activity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void activityReload(){
+    public void activityReload() {
         Intent intent = new Intent(Main2Activity.this, Main2Activity.class);
         startActivity(intent);
-        CustomIntent.customType(Main2Activity.this,"fadein-to-fadeout");
+        CustomIntent.customType(Main2Activity.this, "fadein-to-fadeout");
         finish();
     }
 
@@ -247,7 +239,7 @@ public class Main2Activity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
-    private void loadSharedPreferences(){
+    public void loadSharedPreferences() {
         settings = (UserSettings) getApplication();
         SharedPreferences sharedPreferences = getSharedPreferences(UserSettings.PREFERENCES, MODE_PRIVATE);
         String pref = sharedPreferences.getString(UserSettings.CUSTOM_THEME, UserSettings.LIGHT_THEME);
@@ -261,26 +253,30 @@ public class Main2Activity extends AppCompatActivity {
         Log.d("theme_preferences", "Main2Activity: " + theme);
         settings.setCustomTheme(theme);
 
-        fdof = items.get(1);
+        if (items.size() > 1)
+            fdof = items.get(1);
         Log.d("fdof", "Main2Activity: " + fdof);
         settings.setFDOF_Setting(fdof);
-    }
-    @SuppressLint({"UseCompatLoadingForDrawables"})
-    @SuppressWarnings("deprecation")
-    public void updateTheme(){
-        mcv = findViewById(R.id.calendarView);
-        final int black = ContextCompat.getColor(this, R.color.black);
-        final int white = ContextCompat.getColor(this, R.color.white);
 
-        if(settings.getCustomTheme().equals(UserSettings.DARK_THEME)){
+        Bundle bundle = new Bundle();
+        bundle.putString("fdof", fdof);
+
+        Fragment galleryFragment = new GalleryFragment();
+        galleryFragment.setArguments(bundle);
+    }
+
+    @SuppressLint({"UseCompatLoadingForDrawables"})
+    public void updateTheme() {
+        mcv = findViewById(R.id.calendarView);
+
+        if (settings.getCustomTheme().equals(UserSettings.DARK_THEME)) {
             Log.d("theme_preferences", "dark");
             getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
             mcv.setHeaderTextAppearance(R.color.white);
             mcv.setWeekDayTextAppearance(R.color.white);
             mcv.setArrowColor(R.color.white);
             mcv.setDateTextAppearance(R.color.white);
-        }
-        else{
+        } else {
             Log.d("theme_preferences", "light");
             getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO);
             mcv.setHeaderTextAppearance(R.color.black);
@@ -290,15 +286,15 @@ public class Main2Activity extends AppCompatActivity {
         }
     }
 
-    public void loadCalendarPreferences(){
+    public void loadCalendarPreferences() {
         mcv = findViewById(R.id.calendarView);
-        if(fdof.equals("monday"))
+        if (fdof.equals("monday"))
             mcv.state().edit().setFirstDayOfWeek(Calendar.MONDAY).commit();
         else if (fdof.equals("sunday"))
             mcv.state().edit().setFirstDayOfWeek(Calendar.SUNDAY).commit();
     }
 
-    public void calendarDatabaseHelper(){
+    public void calendarDatabaseHelper() {
         myDB2 = new MyDatabaseHelper2(Main2Activity.this);
         db_calendar_id = new ArrayList<>();
         db_calendar_date = new ArrayList<>();
@@ -306,7 +302,8 @@ public class Main2Activity extends AppCompatActivity {
 
         storeCalendarDataInArrays();
     }
-    public void storeCalendarDataInArrays(){
+
+    public void storeCalendarDataInArrays() {
         Cursor cursor = myDB2.readAllData();
         if (cursor.getCount() != 0) {
             while (cursor.moveToNext()) {
@@ -318,22 +315,8 @@ public class Main2Activity extends AppCompatActivity {
     }
 
     @SuppressWarnings("all")
-    private void addCalendarEvents(){
+    private void addCalendarEvents() {
         mcv = findViewById(R.id.calendarView);
-
-        GalleryFragment galleryFragment = new GalleryFragment();
-        View view = galleryFragment.getView();
-
-        if(view != null){
-            MaterialCalendarView mmcv = (MaterialCalendarView) view.findViewById(R.id.monthCalendarView);
-            mmcv.state().edit().setShowWeekDays(false).commit();
-            Log.d("bug_fixing", "mmcv");
-        }
-
-        View root = galleryFragment.returnRoot();
-        if(root != null){
-            Log.d("bug_fixing", "root isn't null");
-        }
 
         final String NONE = "none";
         final String DONE = "done";
@@ -345,14 +328,16 @@ public class Main2Activity extends AppCompatActivity {
         ArrayList<CalendarDay> calDay_calendar_date = new ArrayList<>();
         ArrayList<CalendarDay> invalidateDays = new ArrayList<>();
         ArrayList<String> calendar_data;
-        //mcv.setSelectedDate(selectedDay);
+
+        java.util.Date todayDate = new java.util.Date();
+        CalendarDay calendarDayTodayDate = CalendarDay.from(todayDate);
+        final Collection<CalendarDay>[] dateDays = new Collection[]{Collections.singleton(calendarDayTodayDate)};
 
         mcv.setSelectionMode(MaterialCalendarView.SELECTION_MODE_MULTIPLE);
         mcv.setOnDateChangedListener(new OnDateSelectedListener() {
             @SuppressWarnings("deprecation")
             @Override
             public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
-                DayViewDecorator dayViewDecorator = eventDecorator;
                 String status;
                 String selectedDay = String.valueOf(date);
                 Toast.makeText(Main2Activity.this, "Day: " + selectedDay, Toast.LENGTH_SHORT).show();
@@ -366,14 +351,15 @@ public class Main2Activity extends AppCompatActivity {
                 Collection<CalendarDay> calendarDays = Collections.singleton(date);
                 java.util.Date dateInfo = date.getDate();
                 String stringDateInfo = String.valueOf(dateInfo);
-                Collection<CalendarDay> dateDays = Collections.singleton(date);
 
-                Log.d("decorator", "dateDays: " + String.valueOf(dateDays));
+                dateDays[0] = Collections.singleton(date);
 
-                for(int i = 0; i < db_calendar_date.size(); i++){
+                Log.d("decorator", "dateDays: " + String.valueOf(dateDays[0]));
+
+                for (int i = 0; i < db_calendar_date.size(); i++) {
                     String edit = db_calendar_date.get(i);
                     SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzzzzzzzz yyyy");
-                    try{
+                    try {
                         Date selDate = formatter.parse(edit);
                         CalendarDay calSelDay = CalendarDay.from(selDate);
                         calDay_calendar_date.add(calSelDay);
@@ -382,35 +368,36 @@ public class Main2Activity extends AppCompatActivity {
                     }
                 }
 
-                storeCalendarDataInArrays();
+                calendarDatabaseHelper();
+                loadCalendarDays();
+
+                selectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.color_primary), dateDays[0]);
+                invalidateSelectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.transparent), dateDays[0]);
 
                 MyDatabaseHelper2 MyDB2 = new MyDatabaseHelper2(Main2Activity.this);
-                selectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.color_primary), dateDays);
-                invalidateSelectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.transparent), dateDays);
-
 
                 CalendarDay calendarDayDate;
 
                 Log.d("decorator", String.valueOf(db_calendar_date));
 
-                if(!db_calendar_date.contains(stringDateInfo)){
+                if (!db_calendar_date.contains(stringDateInfo)) {
                     Log.d("decorator", "false");
                     mcv.addDecorators(selectionEventDecorator);
                     status = DONE;
                     Log.d("decorator", "Status: " + status.toString());
                     MyDB2.addHabit(String.valueOf(dateInfo).trim(), //date
-                                   status.toString().trim()); //status
-                }
-                else if(db_calendar_date.contains(stringDateInfo)){
+                            status.toString().trim()); //status
+                } else if (db_calendar_date.contains(stringDateInfo)) {
                     mcv.clearSelection();
                     Log.d("calendar_fixes", String.valueOf(db_calendar_date));
-                    for(int i = 0; i < db_calendar_date.size(); i++){
+
+                    for (int i = 0; i < db_calendar_date.size(); i++) {
                         String edit = db_calendar_date.get(i);
                         SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzzzzzzzz yyyy");
                         try {
                             Date calendar_date = formatter.parse(edit);
                             calendarDayDate = CalendarDay.from(calendar_date);
-                            if(String.valueOf(calendarDayDate).equals(String.valueOf(date))){
+                            if (String.valueOf(calendarDayDate).equals(String.valueOf(date))) {
                                 Log.d("decorator", "remove: " + edit);
                                 db_calendar_date.remove(date);
                                 String delete_row_id = db_calendar_id.get(i);
@@ -422,7 +409,7 @@ public class Main2Activity extends AppCompatActivity {
                         }
                     }
                 }
-                mcv.addDecorators(invalidateSelectionEventDecorator);
+                mcv.addDecorator(invalidateSelectionEventDecorator);
             }
         });
 
@@ -430,27 +417,27 @@ public class Main2Activity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Log.d("decorator", String.valueOf(weekMode[0]));
-                if(weekMode[0] == true){
+                if (weekMode[0] == true) {
                     weekMode[0] = false;
                     mcv.state().edit().setCalendarDisplayMode(CalendarMode.WEEKS).setShowWeekDays(true).isCacheCalendarPositionEnabled(true).commit();
-                }
-                else if(weekMode[0] == false){
+                } else if (weekMode[0] == false) {
                     weekMode[0] = true;
                     mcv.state().edit().setCalendarDisplayMode(CalendarMode.MONTHS).setShowWeekDays(true).isCacheCalendarPositionEnabled(true).commit();
                 }
             }
         });
     }
-    private void loadCalendarDays(){
+    @SuppressWarnings("deprecation")
+    private void loadCalendarDays() {
         mcv = findViewById(R.id.calendarView);
-        for(int i = 0; i < db_calendar_date.size(); i++){
+        for (int i = 0; i < db_calendar_date.size(); i++) {
             String edit = db_calendar_date.get(i);
             @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat("E MMM dd HH:mm:ss zzzzzzzzz yyyy");
             try {
                 Date loadDate = formatter.parse(edit);
                 CalendarDay loadDates = CalendarDay.from(loadDate);
                 Collection<CalendarDay> previousDates = Collections.singleton(loadDates);
-                previousSelectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.color_primary), previousDates);
+                SelectionEventDecorator previousSelectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.color_primary), previousDates);
                 mcv.addDecorators(previousSelectionEventDecorator);
             } catch (ParseException e) {
                 e.printStackTrace();

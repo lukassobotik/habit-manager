@@ -53,7 +53,7 @@ public class MyDatabaseHelper2 extends SQLiteOpenHelper{
         else
             Toast.makeText(context, "Success! " + result, Toast.LENGTH_SHORT).show();
     }
-    Cursor readAllData(){
+    public Cursor readAllData(){
         String query = "SELECT * FROM " + TABLE_NAME;
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -64,7 +64,7 @@ public class MyDatabaseHelper2 extends SQLiteOpenHelper{
         return cursor;
     }
 
-    void deleteOneRow(String row_id){
+    public void deleteOneRow(String row_id){
         SQLiteDatabase db = this.getWritableDatabase();
         long result = db.delete(TABLE_NAME, "_id=?", new String[]{row_id});
         if(result == -1)

@@ -2,17 +2,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:animateLayoutChanges="true">
+    android:animateLayoutChanges="true"
+    tools:ignore="AlwaysShowAction,HardcodedText" >
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"
         android:titleCondensed="@string/action_settings"
-        app:showAsAction="never" />
+        android:icon="@drawable/ic_baseline_settings_24"
+        app:showAsAction="always"
+        />
 
     <item
         android:id="@+id/action_reload"
         android:orderInCategory="1"
         android:title="Reload Page"
-        app:showAsAction="never" />
+        android:icon="@drawable/ic_menu_reload"
+        app:showAsAction="always"
+        />
 </menu>

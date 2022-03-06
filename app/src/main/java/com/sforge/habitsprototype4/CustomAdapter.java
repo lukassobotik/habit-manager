@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -16,6 +18,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHolder> {
 
@@ -45,11 +50,25 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
+        String repetition = String.valueOf(db_repeat.get(holder.getAdapterPosition()));
+        String[] itemsSettings = repetition.split(",");
+        List<String> items = new ArrayList<>(Arrays.asList(itemsSettings));
+        items.remove("");
+        items.remove("");
+        items.remove("");
+        items.remove("");
+        items.remove("");
+        items.remove("");
+        items.remove("");
+        String item = String.valueOf(items);
+        item = item.substring(1, item.length() - 1);
 
         holder.db_id_txt.setText(String.valueOf(db_id.get(holder.getAdapterPosition())));
         holder.db_name_txt.setText(String.valueOf(db_name.get(holder.getAdapterPosition())));
         holder.db_tag_txt.setText(String.valueOf(db_tag.get(holder.getAdapterPosition())));
-        holder.db_repeat_txt.setText(String.valueOf(db_repeat.get(holder.getAdapterPosition())));
+        holder.db_repeat_txt.setText(item);
+
+        String finalItem = item;
         holder.my_row_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -61,7 +80,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
                 intent.putExtra("id", String.valueOf(db_id.get(holder.getAdapterPosition())));
                 intent.putExtra("name", String.valueOf(db_name.get(holder.getAdapterPosition())));
                 intent.putExtra("tag", String.valueOf(db_tag.get(holder.getAdapterPosition())));
-                intent.putExtra("repeat", String.valueOf(db_repeat.get(holder.getAdapterPosition())));
+                intent.putExtra("repeat", finalItem);
                 activity.startActivityForResult(intent, 1);
             }
         });
@@ -74,6 +93,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
 
+        CheckBox monday, tuesday, wednesday, thursday, friday, saturday, sunday;
         TextView db_id_txt, db_name_txt, db_tag_txt, db_repeat_txt;
         LinearLayout my_row_layout;
 
@@ -86,6 +106,13 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
             my_row_layout = itemView.findViewById(R.id.my_row_layout);
             translate_anim = AnimationUtils.loadAnimation(context, R.anim.translate_anim);
             my_row_layout.setAnimation(translate_anim);
+            monday = itemView.findViewById(R.id.monday_button);
+            tuesday = itemView.findViewById(R.id.tuesday_button);
+            wednesday = itemView.findViewById(R.id.wednesday_button);
+            thursday = itemView.findViewById(R.id.thursday_button);
+            friday = itemView.findViewById(R.id.friday_button);
+            saturday = itemView.findViewById(R.id.saturday_button);
+            sunday = itemView.findViewById(R.id.sunday_button);
         }
     }
 }

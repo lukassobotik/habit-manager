@@ -15,6 +15,7 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
         <item name="android:itemBackground">@color/dark_grey</item>
+        <item name="android:actionMenuTextColor">@color/white</item>
     </style>
 
     <style name="Theme.AppCompat.NoActionBar">
@@ -24,9 +25,20 @@
     <style name="habitCardView">
         <item name="android:background">@drawable/layout_bg</item>
         <item name="android:backgroundTint">@color/dark_grey</item>
+        <item name="mcv_dateTextAppearance">@color/white</item>
     </style>
     <style name="theme_text">
         <item name="android:textColor">@color/dark_on_background</item>
+    </style>
+
+    <style name="weekday_buttons">
+        <item name="android:background">@drawable/circle_button</item>
+        <item name="android:backgroundTint">@color/dark_grey</item>
+        <item name="android:state_pressed">true</item>
+    </style>
+
+    <style name="ActionBar">
+        <item name="background">@color/dark_grey</item>
     </style>
 
     <style name="Theme.HabitsPrototype4.PopupOverlay" parent="ThemeOverlay.AppCompat.DayNight"/>
