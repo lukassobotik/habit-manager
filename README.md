@@ -1,5 +1,7 @@
-# Habit Manager
-Habit Manager is a android application that uses a databases to store habits and selected dates.
+![App icon](https://github.com/PuckyEU/habit-manager/blob/3911828519e92642e7890235b339b39a03d14835/app/src/main/ic_launcher-playstore.png)
+
+# Repeaty
+Repeaty is a android application that uses a databases to store habits and selected dates.
 
 # Features
 - **_Dark_** or **_Light_** Theme
