@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- Calendar Colors -->
+    <color name="calendar_done">#059C00</color>
+    <color name="calendar_failed">#E81300</color>
+    <color name="calendar_skip">#000FDB</color>
+
     <color name="purple_200">#FFBB86FC</color>
     <color name="blue">#0000FF</color>
     <color name="grey">#757872</color>

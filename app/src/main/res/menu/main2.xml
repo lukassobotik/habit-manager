@@ -15,9 +15,23 @@
 
     <item
         android:id="@+id/action_reload"
-        android:orderInCategory="1"
+        android:orderInCategory="99"
         android:title="Reload Page"
         android:icon="@drawable/ic_menu_reload"
+        app:showAsAction="always"
+        />
+    <item
+        android:id="@+id/action_show_month_view"
+        android:orderInCategory="98"
+        android:title="Show Month Mode"
+        android:icon="@drawable/ic_menu_calendar_today"
+        app:showAsAction="always"
+        />
+    <item
+        android:id="@+id/action_show_all_habits"
+        android:orderInCategory="97"
+        android:title="Show All Habits"
+        android:icon="@drawable/ic_menu_storage"
         app:showAsAction="always"
         />
 </menu>
