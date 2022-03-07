@@ -18,18 +18,19 @@
 
     <!-- Preview is disabled because mcv_dateTextAppearance is defined in themes.xml -->
     <com.prolificinteractive.materialcalendarview.MaterialCalendarView
-        style="@style/habitCardView"
         android:id="@+id/monthCalendarView"
+        style="@style/habitCardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:mcv_arrowColor="@color/color_primary"
         app:mcv_calendarMode="month"
         app:mcv_firstDayOfWeek="monday"
         app:mcv_selectionColor="@color/color_primary"
         app:mcv_showOtherDates="all"
         app:mcv_showWeekDays="true"
-        app:mcv_weekDayTextAppearance="@style/theme_text"
-        app:mcv_arrowColor="@color/color_primary" />
+        app:mcv_weekDayTextAppearance="@style/theme_text">
 
+    </com.prolificinteractive.materialcalendarview.MaterialCalendarView>
 </androidx.constraintlayout.widget.ConstraintLayout>

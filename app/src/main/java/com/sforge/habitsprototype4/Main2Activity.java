@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.CalendarMode;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
@@ -68,6 +69,7 @@ public class Main2Activity extends AppCompatActivity {
     MyDatabaseHelper2 myDB2;
     ArrayList<String> db_id, db_name, db_tag, db_repeat;
     ArrayList<String> db_calendar_id, db_calendar_date, db_calendar_status;
+    ArrayList<String> currentHabitIds, currentHabitNames, currentHabitTags, currentHabitRepeat;
     CustomAdapter customAdapter;
 
     String theme = "black";
@@ -76,6 +78,8 @@ public class Main2Activity extends AppCompatActivity {
 
     MaterialCalendarView mcv;
     final boolean[] weekMode = {false};
+    final boolean[] enableMonthMode = {false};
+    final boolean[] showAllHabits = {false};
     boolean disabled = false;
 
     @Override
@@ -93,6 +97,7 @@ public class Main2Activity extends AppCompatActivity {
 
         findIDs();
         databaseHelper();
+        getCurrentDay();
     }
 
     public void createActivityViews() {
@@ -126,6 +131,12 @@ public class Main2Activity extends AppCompatActivity {
                 if (String.valueOf(navDestination).equals("Destination(com.sforge.habitsprototype4:id/nav_home) label=Home class=com.sforge.habitsprototype4.ui.home.HomeFragment")) {
                     activityReload();
                 }
+                if (String.valueOf(navDestination).equals("Destination(com.sforge.habitsprototype4:id/nav_gallery) label=Calendar class=com.sforge.habitsprototype4.ui.gallery.GalleryFragment")) {
+                    findViewById(R.id.fab).setVisibility(View.GONE);
+                }
+                else{
+                    findViewById(R.id.fab).setVisibility(View.VISIBLE);
+                }
             }
         });
     }
@@ -145,7 +156,8 @@ public class Main2Activity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         mcv = findViewById(R.id.calendarView);
-        mcv.state().edit().setCalendarDisplayMode(CalendarMode.WEEKS).setShowWeekDays(true).isCacheCalendarPositionEnabled(true).commit();
+        mcv.state().edit().setCalendarDisplayMode(CalendarMode.WEEKS).setShowWeekDays(true).commit();
+        mcv.setTopbarVisible(false);
     }
 
     @Override
@@ -203,16 +215,43 @@ public class Main2Activity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        mcv = findViewById(R.id.calendarView);
+        View view = findViewById(R.id.fab);
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
-            Log.d("options_menu", "settings");
             Intent intent = new Intent(Main2Activity.this, SettingActivity.class);
             startActivity(intent);
         }
         if (id == R.id.action_reload) {
-            Log.d("options_menu", "reload page");
             activityReload();
+        }
+        if (id == R.id.action_show_month_view){
+            if (enableMonthMode[0]) {
+                enableMonthMode[0] = false;
+                mcv.state().edit().setCalendarDisplayMode(CalendarMode.WEEKS).setShowWeekDays(true).commit();
+                mcv.setTopbarVisible(false);
+            } else {
+                enableMonthMode[0] = true;
+                mcv.state().edit().setCalendarDisplayMode(CalendarMode.MONTHS).setShowWeekDays(true).commit();
+                mcv.setTopbarVisible(true);
+                Snackbar.make(view, "Showing Month Calendar", Snackbar.LENGTH_LONG).setAction("Showing Month Calendar", null).show();
+            }
+
+        }
+        if (id == R.id.action_show_all_habits){
+            if (showAllHabits[0]) {
+                mcv.setVisibility(View.VISIBLE);
+                showAllHabits[0] = false;
+                getCurrentDay();
+                Snackbar.make(view, "Showing Today's Habits", Snackbar.LENGTH_LONG).setAction("Showing Today's Habits", null).show();
+            } else {
+                mcv.setVisibility(View.GONE);
+                showAllHabits[0] = true;
+                databaseHelper();
+                mcv.clearSelection();
+                Snackbar.make(view, "Showing All Habits", Snackbar.LENGTH_LONG).setAction("Showing All Habits", null).show();
+            }
         }
 
         return super.onOptionsItemSelected(item);
@@ -228,7 +267,6 @@ public class Main2Activity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Log.d("bug_fixing", "backPressed");
         activityReload();
     }
 
@@ -250,12 +288,10 @@ public class Main2Activity extends AppCompatActivity {
 
         theme = items.get(0);
 
-        Log.d("theme_preferences", "Main2Activity: " + theme);
         settings.setCustomTheme(theme);
 
         if (items.size() > 1)
             fdof = items.get(1);
-        Log.d("fdof", "Main2Activity: " + fdof);
         settings.setFDOF_Setting(fdof);
 
         Bundle bundle = new Bundle();
@@ -270,14 +306,12 @@ public class Main2Activity extends AppCompatActivity {
         mcv = findViewById(R.id.calendarView);
 
         if (settings.getCustomTheme().equals(UserSettings.DARK_THEME)) {
-            Log.d("theme_preferences", "dark");
             getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
             mcv.setHeaderTextAppearance(R.color.white);
             mcv.setWeekDayTextAppearance(R.color.white);
             mcv.setArrowColor(R.color.white);
             mcv.setDateTextAppearance(R.color.white);
         } else {
-            Log.d("theme_preferences", "light");
             getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO);
             mcv.setHeaderTextAppearance(R.color.black);
             mcv.setWeekDayTextAppearance(R.color.black);
@@ -302,7 +336,6 @@ public class Main2Activity extends AppCompatActivity {
 
         storeCalendarDataInArrays();
     }
-
     public void storeCalendarDataInArrays() {
         Cursor cursor = myDB2.readAllData();
         if (cursor.getCount() != 0) {
@@ -314,115 +347,94 @@ public class Main2Activity extends AppCompatActivity {
         }
     }
 
+    public void showSelectedDaysHabit(int day){
+        currentHabitIds = new ArrayList<>();
+        currentHabitNames = new ArrayList<>();
+        currentHabitTags = new ArrayList<>();
+        currentHabitRepeat = new ArrayList<>();
+
+        String weekDay = "";
+        switch(day){
+            case 0:
+                weekDay = "SU";
+                break;
+            case 1:
+                weekDay = "MO";
+                break;
+            case 2:
+                weekDay = "TU";
+                break;
+            case 3:
+                weekDay = "WE";
+                break;
+            case 4:
+                weekDay = "TH";
+                break;
+            case 5:
+                weekDay = "FR";
+                break;
+            case 6:
+                weekDay = "SA";
+                break;
+        }
+
+        for (int i = 0; i < db_repeat.size(); i++){
+            String s = db_repeat.get(i);
+            if (s.contains(weekDay)){
+                currentHabitIds.add(db_id.get(i));
+                currentHabitNames.add(db_name.get(i));
+                currentHabitTags.add(db_tag.get(i));
+                currentHabitRepeat.add(s);
+            }
+        }
+
+        customAdapter = new CustomAdapter(Main2Activity.this, Main2Activity.this, currentHabitIds, currentHabitNames, currentHabitTags, currentHabitRepeat);
+        recyclerView.setAdapter(customAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(Main2Activity.this));
+    }
+    @SuppressWarnings("deprecation")
+    public void getCurrentDay(){
+        mcv = findViewById(R.id.calendarView);
+        java.util.Date todayDate = new java.util.Date();
+        todayDate.setHours(0);
+        todayDate.setMinutes(0);
+        todayDate.setSeconds(0);
+
+        CalendarDay calendarDay = CalendarDay.from(todayDate);
+        mcv.setSelectedDate(calendarDay);
+
+        int weekDay = todayDate.getDay();
+        showSelectedDaysHabit(weekDay);
+    }
+
     @SuppressWarnings("all")
     private void addCalendarEvents() {
         mcv = findViewById(R.id.calendarView);
-
         final String NONE = "none";
         final String DONE = "done";
         final String FAIL = "fail";
         final String SKIP = "skip";
 
-        ArrayList<CalendarDay> selectedDays = new ArrayList<>();
-        ArrayList<CalendarDay> loadedDays = new ArrayList<>();
-        ArrayList<CalendarDay> calDay_calendar_date = new ArrayList<>();
-        ArrayList<CalendarDay> invalidateDays = new ArrayList<>();
-        ArrayList<String> calendar_data;
-
-        java.util.Date todayDate = new java.util.Date();
-        CalendarDay calendarDayTodayDate = CalendarDay.from(todayDate);
-        final Collection<CalendarDay>[] dateDays = new Collection[]{Collections.singleton(calendarDayTodayDate)};
-
-        mcv.setSelectionMode(MaterialCalendarView.SELECTION_MODE_MULTIPLE);
+        mcv.setSelectionMode(MaterialCalendarView.SELECTION_MODE_SINGLE);
         mcv.setOnDateChangedListener(new OnDateSelectedListener() {
             @SuppressWarnings("deprecation")
             @Override
             public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
-                String status;
-                String selectedDay = String.valueOf(date);
-                Toast.makeText(Main2Activity.this, "Day: " + selectedDay, Toast.LENGTH_SHORT).show();
-
-                java.util.Date todayDate = new java.util.Date();
-                todayDate.setHours(0);
-                todayDate.setMinutes(0);
-                todayDate.setSeconds(0);
-                Log.d("decorator", "Today Date: " + String.valueOf(todayDate));
-                Collection<EventDecorator> eventDecorators;
-                Collection<CalendarDay> calendarDays = Collections.singleton(date);
-                java.util.Date dateInfo = date.getDate();
-                String stringDateInfo = String.valueOf(dateInfo);
-
-                dateDays[0] = Collections.singleton(date);
-
-                Log.d("decorator", "dateDays: " + String.valueOf(dateDays[0]));
-
-                for (int i = 0; i < db_calendar_date.size(); i++) {
-                    String edit = db_calendar_date.get(i);
-                    SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzzzzzzzz yyyy");
-                    try {
-                        Date selDate = formatter.parse(edit);
-                        CalendarDay calSelDay = CalendarDay.from(selDate);
-                        calDay_calendar_date.add(calSelDay);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                calendarDatabaseHelper();
-                loadCalendarDays();
-
-                selectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.color_primary), dateDays[0]);
-                invalidateSelectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.transparent), dateDays[0]);
-
-                MyDatabaseHelper2 MyDB2 = new MyDatabaseHelper2(Main2Activity.this);
-
-                CalendarDay calendarDayDate;
-
-                Log.d("decorator", String.valueOf(db_calendar_date));
-
-                if (!db_calendar_date.contains(stringDateInfo)) {
-                    Log.d("decorator", "false");
-                    mcv.addDecorators(selectionEventDecorator);
-                    status = DONE;
-                    Log.d("decorator", "Status: " + status.toString());
-                    MyDB2.addHabit(String.valueOf(dateInfo).trim(), //date
-                            status.toString().trim()); //status
-                } else if (db_calendar_date.contains(stringDateInfo)) {
-                    mcv.clearSelection();
-                    Log.d("calendar_fixes", String.valueOf(db_calendar_date));
-
-                    for (int i = 0; i < db_calendar_date.size(); i++) {
-                        String edit = db_calendar_date.get(i);
-                        SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzzzzzzzz yyyy");
-                        try {
-                            Date calendar_date = formatter.parse(edit);
-                            calendarDayDate = CalendarDay.from(calendar_date);
-                            if (String.valueOf(calendarDayDate).equals(String.valueOf(date))) {
-                                Log.d("decorator", "remove: " + edit);
-                                db_calendar_date.remove(date);
-                                String delete_row_id = db_calendar_id.get(i);
-                                myDB2.deleteOneRow(delete_row_id);
-                                Log.d("decorator", "remove: " + String.valueOf(delete_row_id));
-                            }
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-                mcv.addDecorator(invalidateSelectionEventDecorator);
+                java.util.Date selDate = date.getDate();
+                int weekDay = selDate.getDay();
+                showSelectedDaysHabit(weekDay);
             }
         });
 
         mcv.setOnTitleClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("decorator", String.valueOf(weekMode[0]));
                 if (weekMode[0] == true) {
                     weekMode[0] = false;
-                    mcv.state().edit().setCalendarDisplayMode(CalendarMode.WEEKS).setShowWeekDays(true).isCacheCalendarPositionEnabled(true).commit();
+                    mcv.state().edit().setCalendarDisplayMode(CalendarMode.WEEKS).setShowWeekDays(true).commit();
                 } else if (weekMode[0] == false) {
                     weekMode[0] = true;
-                    mcv.state().edit().setCalendarDisplayMode(CalendarMode.MONTHS).setShowWeekDays(true).isCacheCalendarPositionEnabled(true).commit();
+                    mcv.state().edit().setCalendarDisplayMode(CalendarMode.MONTHS).setShowWeekDays(true).commit();
                 }
             }
         });
@@ -437,7 +449,7 @@ public class Main2Activity extends AppCompatActivity {
                 Date loadDate = formatter.parse(edit);
                 CalendarDay loadDates = CalendarDay.from(loadDate);
                 Collection<CalendarDay> previousDates = Collections.singleton(loadDates);
-                SelectionEventDecorator previousSelectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.color_primary), previousDates);
+                SelectionEventDecorator previousSelectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.calendar_done), previousDates);
                 mcv.addDecorators(previousSelectionEventDecorator);
             } catch (ParseException e) {
                 e.printStackTrace();

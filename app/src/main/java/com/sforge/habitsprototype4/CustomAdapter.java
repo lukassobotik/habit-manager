@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -20,13 +19,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHolder> {
 
     Context context;
     Activity activity;
-    private ArrayList db_id, db_name, db_tag, db_repeat;
+    private final ArrayList db_id;
+    private final ArrayList db_name;
+    private final ArrayList db_tag;
+    private final ArrayList db_repeat;
 
     Animation translate_anim;
 
@@ -49,17 +50,17 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
         String repetition = String.valueOf(db_repeat.get(holder.getAdapterPosition()));
         String[] itemsSettings = repetition.split(",");
         List<String> items = new ArrayList<>(Arrays.asList(itemsSettings));
-        items.remove("");
-        items.remove("");
-        items.remove("");
-        items.remove("");
-        items.remove("");
-        items.remove("");
-        items.remove("");
+
+        final int itemSize = 6;
+        for(int i = 0; i < itemSize; i++){
+            items.remove("");
+        }
+
         String item = String.valueOf(items);
         item = item.substring(1, item.length() - 1);
 
@@ -69,20 +70,17 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
         holder.db_repeat_txt.setText(item);
 
         String finalItem = item;
-        holder.my_row_layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(context, UpdateActivity.class);
-                Log.d("UpdateActivity", "Adapter " + String.valueOf(db_id));
-                Log.d("UpdateActivity", "Adapter " + String.valueOf(db_name));
-                Log.d("UpdateActivity", "Adapter " + String.valueOf(db_tag));
-                Log.d("UpdateActivity", "Adapter " + String.valueOf(db_repeat));
-                intent.putExtra("id", String.valueOf(db_id.get(holder.getAdapterPosition())));
-                intent.putExtra("name", String.valueOf(db_name.get(holder.getAdapterPosition())));
-                intent.putExtra("tag", String.valueOf(db_tag.get(holder.getAdapterPosition())));
-                intent.putExtra("repeat", finalItem);
-                activity.startActivityForResult(intent, 1);
-            }
+        holder.my_row_layout.setOnClickListener(view -> {
+            Intent intent = new Intent(context, UpdateActivity.class);
+            Log.d("UpdateActivity", "Adapter " + db_id);
+            Log.d("UpdateActivity", "Adapter " + db_name);
+            Log.d("UpdateActivity", "Adapter " + db_tag);
+            Log.d("UpdateActivity", "Adapter " + db_repeat);
+            intent.putExtra("id", String.valueOf(db_id.get(holder.getAdapterPosition())));
+            intent.putExtra("name", String.valueOf(db_name.get(holder.getAdapterPosition())));
+            intent.putExtra("tag", String.valueOf(db_tag.get(holder.getAdapterPosition())));
+            intent.putExtra("repeat", finalItem);
+            activity.startActivityForResult(intent, 1);
         });
     }
 
