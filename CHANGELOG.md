@@ -1,3 +1,15 @@
+# v0.2.1(Mar 11 2022)
+   - ## **_Changes_**
+     - **_Selected Days_** are now **_Shown_** in the **_Action Bar_**
+     - Now **_Able to Fail Days_** by Holding down the **_Date_** in the **_Calendar Fragment_**
+     - If there are not any **_Habits_** in the **_Currently_** selected day, it **_Shows_** a text that there aren't any habits
+
+  - ## **_Bug Fixes_**
+     - When in a different fragment, clicking **_Show All Habits_** or **_Show Month Mode_** caused the application to **_Crash_**
+     - **_Settings_** is removed from the **_Navigation Drawer_**
+     - **_First Day Of Week_** didn't change in the **_Calendar Fragment_**
+     - **_Habits_** now scale **_According to Your Device_**
+
 # v0.2.0 (Mar 7 2022)
    - ## **_Changes_**
      - **_Habit Repeat_** is now **_Functional_**! Meaning that when you click on a day it will only show you the correct habits
@@ -7,6 +19,7 @@
   - ## **_Bug Fixes_**
      - Code **_Optimization_**
      - The **_Floating Action Button_** now isn't visible in the **_Calendar Fragment_**
+
 # v0.1.1 (Mar 6 2022)
    - ## **_Changes_**
      - **_UI Revamp_** is now also in **_Add Activity_** and **_Update Activtity_**
