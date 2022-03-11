@@ -12,21 +12,21 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        style="@style/habitCardView">
+        style="@style/themeBackground">
         <androidx.cardview.widget.CardView
             android:id="@+id/habitCardView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardBackgroundColor="@color/transparent"
             app:cardCornerRadius="@dimen/rounded_corners"
-            style="@style/habitCardView">
+            style="@style/themeBackground">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/habit_item"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="12dp"
-                style="@style/habitCardView">
+                style="@style/themeBackground">
 
                 <TextView
                     android:id="@+id/db_id_txt"

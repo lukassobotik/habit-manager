@@ -5,6 +5,7 @@
       <map>
         <entry key="..\:/Users/LukasSobotik/Android/AndroidStudioProjects/habitsprototype4/app/src/main/res/drawable/circle_button.xml" value="0.1935" />
         <entry key="..\:/Users/LukasSobotik/Android/AndroidStudioProjects/habitsprototype4/app/src/main/res/drawable/circle_button_selected.xml" value="0.273" />
+        <entry key="..\:/Users/LukasSobotik/Android/AndroidStudioProjects/habitsprototype4/app/src/main/res/drawable/full_layout_bg.xml" value="0.3635" />
         <entry key="..\:/Users/LukasSobotik/Android/AndroidStudioProjects/habitsprototype4/app/src/main/res/drawable/ic_menu_calendar_today.xml" value="0.3635" />
         <entry key="..\:/Users/LukasSobotik/Android/AndroidStudioProjects/habitsprototype4/app/src/main/res/drawable/ic_menu_list.xml" value="0.3635" />
         <entry key="..\:/Users/LukasSobotik/Android/AndroidStudioProjects/habitsprototype4/app/src/main/res/drawable/layout_bg.xml" value="0.273" />
@@ -21,8 +22,8 @@
         <entry key="..\:/Users/LukasSobotik/Android/AndroidStudioProjects/habitsprototype4/app/src/main/res/layout/app_bar_main2.xml" value="0.22" />
         <entry key="..\:/Users/LukasSobotik/Android/AndroidStudioProjects/habitsprototype4/app/src/main/res/layout/calendar_cell.xml" value="0.3625" />
         <entry key="..\:/Users/LukasSobotik/Android/AndroidStudioProjects/habitsprototype4/app/src/main/res/layout/content_main2.xml" value="0.2975630611372381" />
-        <entry key="..\:/Users/LukasSobotik/Android/AndroidStudioProjects/habitsprototype4/app/src/main/res/layout/fragment_gallery.xml" value="0.16" />
-        <entry key="..\:/Users/LukasSobotik/Android/AndroidStudioProjects/habitsprototype4/app/src/main/res/layout/fragment_home.xml" value="0.1" />
+        <entry key="..\:/Users/LukasSobotik/Android/AndroidStudioProjects/habitsprototype4/app/src/main/res/layout/fragment_gallery.xml" value="0.25" />
+        <entry key="..\:/Users/LukasSobotik/Android/AndroidStudioProjects/habitsprototype4/app/src/main/res/layout/fragment_home.xml" value="0.25" />
         <entry key="..\:/Users/LukasSobotik/Android/AndroidStudioProjects/habitsprototype4/app/src/main/res/layout/fragment_logout.xml" value="0.3625" />
         <entry key="..\:/Users/LukasSobotik/Android/AndroidStudioProjects/habitsprototype4/app/src/main/res/layout/materialcalendarview.xml" value="0.3625" />
         <entry key="..\:/Users/LukasSobotik/Android/AndroidStudioProjects/habitsprototype4/app/src/main/res/layout/my_row.xml" value="0.33" />

@@ -19,7 +19,8 @@
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_baseline_settings_24"
-            android:title="@string/menu_settings" />
+            android:title="@string/menu_settings"
+            android:visible="false"/>
         <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_baseline_login_24"

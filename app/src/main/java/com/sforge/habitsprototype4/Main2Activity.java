@@ -9,7 +9,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -47,6 +48,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -54,9 +56,6 @@ import maes.tech.intentanim.CustomIntent;
 
 public class Main2Activity extends AppCompatActivity {
     private UserSettings settings;
-
-    private SelectionEventDecorator selectionEventDecorator;
-    private SelectionEventDecorator invalidateSelectionEventDecorator;
     private AppBarConfiguration mAppBarConfiguration;
 
     RecyclerView recyclerView;
@@ -72,9 +71,12 @@ public class Main2Activity extends AppCompatActivity {
     ArrayList<String> currentHabitIds, currentHabitNames, currentHabitTags, currentHabitRepeat;
     CustomAdapter customAdapter;
 
-    String theme = "black";
-    String fdof = "monday";
+    public String theme = "black";
+    public String fdof = "monday";
+    public String currentFragment = "home";
     CardView cardView;
+    ImageView emptyImageView;
+    TextView noHabitsText;
 
     MaterialCalendarView mcv;
     final boolean[] weekMode = {false};
@@ -108,6 +110,7 @@ public class Main2Activity extends AppCompatActivity {
         binding.appBarMain2.fab.setOnClickListener(view -> {
             Intent intent = new Intent(Main2Activity.this, AddActivity.class);
             startActivity(intent);
+            CustomIntent.customType(Main2Activity.this, "fadein-to-fadeout");
         });
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
@@ -119,6 +122,7 @@ public class Main2Activity extends AppCompatActivity {
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main2);
         onFragmentEnter(navController);
+
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
     }
@@ -128,16 +132,25 @@ public class Main2Activity extends AppCompatActivity {
         navController.addOnDestinationChangedListener((navController1, navDestination, bundle) -> {
             Log.d("navDestination", String.valueOf(navDestination));
             if (!disabled) {
-                if (String.valueOf(navDestination).equals("Destination(com.sforge.habitsprototype4:id/nav_home) label=Home class=com.sforge.habitsprototype4.ui.home.HomeFragment")) {
+                if (String.valueOf(navDestination.getLabel()).equals("Home")) {
                     activityReload();
                 }
-                if (String.valueOf(navDestination).equals("Destination(com.sforge.habitsprototype4:id/nav_gallery) label=Calendar class=com.sforge.habitsprototype4.ui.gallery.GalleryFragment")) {
+                if (String.valueOf(navDestination.getLabel()).equals("Calendar")) {
                     findViewById(R.id.fab).setVisibility(View.GONE);
                 }
                 else{
                     findViewById(R.id.fab).setVisibility(View.VISIBLE);
                 }
             }
+
+            if(String.valueOf(navDestination.getLabel()).equals("Home"))
+                currentFragment = "Home";
+            if(String.valueOf(navDestination.getLabel()).equals("Calendar"))
+                currentFragment = "Calendar";
+            if(String.valueOf(navDestination.getLabel()).equals("Statistics"))
+                currentFragment = "Statistics";
+            if(String.valueOf(navDestination.getLabel()).equals("Logout"))
+                currentFragment = "Logout";
         });
     }
 
@@ -204,6 +217,8 @@ public class Main2Activity extends AppCompatActivity {
         habit_item = findViewById(R.id.habit_item);
         home_constraint = findViewById(R.id.home_constraint);
         cardView = findViewById(R.id.habitCardView);
+        emptyImageView = findViewById(R.id.empty_image_view);
+        noHabitsText = findViewById(R.id.no_habits_text);
     }
 
     @Override
@@ -222,35 +237,49 @@ public class Main2Activity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             Intent intent = new Intent(Main2Activity.this, SettingActivity.class);
             startActivity(intent);
+            CustomIntent.customType(Main2Activity.this, "fadein-to-fadeout");
         }
         if (id == R.id.action_reload) {
             activityReload();
         }
         if (id == R.id.action_show_month_view){
-            if (enableMonthMode[0]) {
-                enableMonthMode[0] = false;
-                mcv.state().edit().setCalendarDisplayMode(CalendarMode.WEEKS).setShowWeekDays(true).commit();
-                mcv.setTopbarVisible(false);
-            } else {
-                enableMonthMode[0] = true;
-                mcv.state().edit().setCalendarDisplayMode(CalendarMode.MONTHS).setShowWeekDays(true).commit();
-                mcv.setTopbarVisible(true);
-                Snackbar.make(view, "Showing Month Calendar", Snackbar.LENGTH_LONG).setAction("Showing Month Calendar", null).show();
+            if(currentFragment.equals("Home")){
+                if (enableMonthMode[0]) {
+                    enableMonthMode[0] = false;
+                    mcv.state().edit().setCalendarDisplayMode(CalendarMode.WEEKS).setShowWeekDays(true).commit();
+                    mcv.setTopbarVisible(false);
+                } else {
+                    enableMonthMode[0] = true;
+                    mcv.state().edit().setCalendarDisplayMode(CalendarMode.MONTHS).setShowWeekDays(true).commit();
+                    mcv.setTopbarVisible(true);
+                    Snackbar.make(view, "Showing Month Calendar", Snackbar.LENGTH_LONG).setAction("Showing Month Calendar", null).show();
+                }
             }
-
         }
         if (id == R.id.action_show_all_habits){
-            if (showAllHabits[0]) {
-                mcv.setVisibility(View.VISIBLE);
-                showAllHabits[0] = false;
-                getCurrentDay();
-                Snackbar.make(view, "Showing Today's Habits", Snackbar.LENGTH_LONG).setAction("Showing Today's Habits", null).show();
-            } else {
-                mcv.setVisibility(View.GONE);
-                showAllHabits[0] = true;
-                databaseHelper();
-                mcv.clearSelection();
-                Snackbar.make(view, "Showing All Habits", Snackbar.LENGTH_LONG).setAction("Showing All Habits", null).show();
+            if(currentFragment.equals("Home")){
+                if (showAllHabits[0]) {
+                    setCurrentDayTitle();
+                    mcv.setVisibility(View.VISIBLE);
+                    showAllHabits[0] = false;
+                    getCurrentDay();
+                    Snackbar.make(view, "Showing Today's Habits", Snackbar.LENGTH_LONG).setAction("Showing Today's Habits", null).show();
+                } else {
+                    Objects.requireNonNull(getSupportActionBar()).setTitle("All Habits");
+                    mcv.setVisibility(View.GONE);
+                    showAllHabits[0] = true;
+                    Cursor cursor = myDB2.readAllData();
+                    if(cursor.getCount() == 0){
+                        emptyImageView.setVisibility(View.VISIBLE);
+                        noHabitsText.setVisibility(View.VISIBLE);}
+                    else{
+                        emptyImageView.setVisibility(View.GONE);
+                        noHabitsText.setVisibility(View.GONE);
+                    }
+                    databaseHelper();
+                    mcv.clearSelection();
+                    Snackbar.make(view, "Showing All Habits", Snackbar.LENGTH_LONG).setAction("Showing All Habits", null).show();
+                }
             }
         }
 
@@ -388,6 +417,13 @@ public class Main2Activity extends AppCompatActivity {
             }
         }
 
+        if(!currentHabitNames.isEmpty()){
+            emptyImageView.setVisibility(View.GONE);
+            noHabitsText.setVisibility(View.GONE);}
+        else {
+            emptyImageView.setVisibility(View.VISIBLE);
+            noHabitsText.setVisibility(View.VISIBLE);}
+
         customAdapter = new CustomAdapter(Main2Activity.this, Main2Activity.this, currentHabitIds, currentHabitNames, currentHabitTags, currentHabitRepeat);
         recyclerView.setAdapter(customAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(Main2Activity.this));
@@ -402,15 +438,24 @@ public class Main2Activity extends AppCompatActivity {
 
         CalendarDay calendarDay = CalendarDay.from(todayDate);
         mcv.setSelectedDate(calendarDay);
+        setCurrentDayTitle();
 
         int weekDay = todayDate.getDay();
         showSelectedDaysHabit(weekDay);
+    }
+    public void setCurrentDayTitle(){
+        Date myDate = new Date();
+        @SuppressLint("SimpleDateFormat") String selDate = new SimpleDateFormat("E MMM dd").format(myDate);
+        Objects.requireNonNull(getSupportActionBar()).setTitle(selDate);
+    }
+    public void setSelectedDayTitle(Date date){
+        @SuppressLint("SimpleDateFormat") String selDate = new SimpleDateFormat("E MMM dd").format(date);
+        Objects.requireNonNull(getSupportActionBar()).setTitle(selDate);
     }
 
     @SuppressWarnings("all")
     private void addCalendarEvents() {
         mcv = findViewById(R.id.calendarView);
-        final String NONE = "none";
         final String DONE = "done";
         final String FAIL = "fail";
         final String SKIP = "skip";
@@ -423,6 +468,7 @@ public class Main2Activity extends AppCompatActivity {
                 java.util.Date selDate = date.getDate();
                 int weekDay = selDate.getDay();
                 showSelectedDaysHabit(weekDay);
+                setSelectedDayTitle(selDate);
             }
         });
 
@@ -450,6 +496,10 @@ public class Main2Activity extends AppCompatActivity {
                 CalendarDay loadDates = CalendarDay.from(loadDate);
                 Collection<CalendarDay> previousDates = Collections.singleton(loadDates);
                 SelectionEventDecorator previousSelectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.calendar_done), previousDates);
+                if(db_calendar_status.get(i).equals("done"))
+                    previousSelectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.calendar_done), previousDates);
+                else if(db_calendar_status.get(i).equals("fail"))
+                    previousSelectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.calendar_failed), previousDates);
                 mcv.addDecorators(previousSelectionEventDecorator);
             } catch (ParseException e) {
                 e.printStackTrace();

@@ -16,7 +16,7 @@
         android:layout_height="75dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            style="@style/habitCardView"
+            style="@style/themeBackground"
             android:layout_width="match_parent"
             android:layout_height="70dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -82,7 +82,7 @@
         android:layout_height="75dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            style="@style/habitCardView"
+            style="@style/themeBackground"
             android:layout_width="match_parent"
             android:layout_height="75dp"
             app:layout_constraintEnd_toEndOf="parent"

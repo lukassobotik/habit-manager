@@ -22,11 +22,17 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
-    <style name="habitCardView">
+    <style name="themeBackground">
         <item name="android:background">@drawable/layout_bg</item>
         <item name="android:backgroundTint">@color/dark_grey</item>
         <item name="mcv_dateTextAppearance">@color/white</item>
     </style>
+    <style name="themeFullBackground">
+        <item name="android:background">@drawable/full_layout_bg</item>
+        <item name="android:backgroundTint">@color/dark_grey</item>
+        <item name="mcv_dateTextAppearance">@color/white</item>
+    </style>
+
     <style name="theme_text">
         <item name="android:textColor">@color/dark_on_background</item>
     </style>

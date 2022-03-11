@@ -22,8 +22,13 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="habitCardView">
+    <style name="themeBackground">
         <item name="android:background">@drawable/layout_bg</item>
+        <item name="android:backgroundTint">@color/white</item>
+        <item name="mcv_dateTextAppearance">@color/black</item>
+    </style>
+    <style name="themeFullBackground">
+        <item name="android:background">@drawable/full_layout_bg</item>
         <item name="android:backgroundTint">@color/white</item>
         <item name="mcv_dateTextAppearance">@color/black</item>
     </style>
