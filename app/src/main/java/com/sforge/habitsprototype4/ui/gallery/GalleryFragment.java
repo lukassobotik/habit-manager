@@ -6,7 +6,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -26,6 +28,7 @@ import com.sforge.habitsprototype4.MyDatabaseHelper2;
 import com.sforge.habitsprototype4.R;
 import com.sforge.habitsprototype4.SelectionEventDecorator;
 import com.sforge.habitsprototype4.databinding.FragmentGalleryBinding;
+import com.sforge.habitsprototype4.statistics.MainStatistics;
 import com.sforge.habitsprototype4.ui.settings.UserSettings;
 
 import java.text.ParseException;
@@ -42,7 +45,6 @@ public class GalleryFragment extends Fragment {
     Context mContext;
     private FragmentGalleryBinding binding;
     MaterialCalendarView mcv;
-    Button done, fail, skip;
     View root;
     MyDatabaseHelper2 myDB2;
     ArrayList<String> db_calendar_id, db_calendar_date, db_calendar_status;
@@ -121,7 +123,7 @@ public class GalleryFragment extends Fragment {
             }
         }
     }
-
+    @SuppressWarnings("all")
     private void addCalendarEvents() {
         final String DONE = "done";
         final String FAIL = "fail";
@@ -134,8 +136,9 @@ public class GalleryFragment extends Fragment {
         CalendarDay calendarDayTodayDate = CalendarDay.from(todayDate);
         final Collection<CalendarDay>[] dateDays = new Collection[]{Collections.singleton(calendarDayTodayDate)};
 
-        mcv.setSelectionMode(MaterialCalendarView.SELECTION_MODE_SINGLE);
+        mcv.setSelectionMode(MaterialCalendarView.SELECTION_MODE_MULTIPLE);
         mcv.setOnDateChangedListener((widget, date, selected) -> {
+            mcv.setSelectionColor(Color.parseColor("#059C00"));
             String status;
 
             Date dateInfo = date.getDate();
@@ -144,7 +147,7 @@ public class GalleryFragment extends Fragment {
             dateDays[0] = Collections.singleton(date);
 
             calendarDatabaseHelper();
-            loadCalendarDays();
+            //loadCalendarDays();
 
             invalidateSelectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.transparent), dateDays[0]);
             selectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.calendar_done), dateDays[0]);
@@ -160,6 +163,7 @@ public class GalleryFragment extends Fragment {
                         status.trim()); //status
             } else if (db_calendar_date.contains(stringDateInfo)) {
                 mcv.clearSelection();
+                mcv.addDecorators(invalidateSelectionEventDecorator);
                 for (int i = 0; i < db_calendar_date.size(); i++) {
                     String edit = db_calendar_date.get(i);
                     @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzzzzzzzz yyyy");
@@ -176,10 +180,12 @@ public class GalleryFragment extends Fragment {
                     }
                 }
             }
-            mcv.addDecorator(invalidateSelectionEventDecorator);
+            sendDataForStatistics();
         });
 
         mcv.setOnDateLongClickListener((materialCalendarView, date) -> {
+            mcv.setSelectionColor(Color.parseColor("#E81300"));
+            mcv.setSelectionMode(MaterialCalendarView.SELECTION_MODE_MULTIPLE);
             String status;
 
             Date dateInfo = date.getDate();
@@ -188,7 +194,7 @@ public class GalleryFragment extends Fragment {
             dateDays[0] = Collections.singleton(date);
 
             calendarDatabaseHelper();
-            loadCalendarDays();
+            //loadCalendarDays();
 
             invalidateSelectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.transparent), dateDays[0]);
             selectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.calendar_failed), dateDays[0]);
@@ -206,6 +212,7 @@ public class GalleryFragment extends Fragment {
 
             } else if (db_calendar_date.contains(stringDateInfo)) {
                 mcv.clearSelection();
+                mcv.addDecorators(invalidateSelectionEventDecorator);
                 for (int i = 0; i < db_calendar_date.size(); i++) {
                     String edit = db_calendar_date.get(i);
                     @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzzzzzzzz yyyy");
@@ -222,10 +229,11 @@ public class GalleryFragment extends Fragment {
                     }
                 }
             }
-            mcv.addDecorator(invalidateSelectionEventDecorator);
+            sendDataForStatistics();
         });
     }
 
+    @SuppressWarnings("deprecation")
     private void loadCalendarDays() {
         for (int i = 0; i < db_calendar_date.size(); i++) {
             String edit = db_calendar_date.get(i);
@@ -234,7 +242,7 @@ public class GalleryFragment extends Fragment {
                 Date loadDate = formatter.parse(edit);
                 CalendarDay loadDates = CalendarDay.from(loadDate);
                 Collection<CalendarDay> previousDates = Collections.singleton(loadDates);
-                SelectionEventDecorator previousSelectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.calendar_done), previousDates);;
+                SelectionEventDecorator previousSelectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.calendar_done), previousDates);
                 if(db_calendar_status.get(i).equals("done"))
                     previousSelectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.calendar_done), previousDates);
                 else if(db_calendar_status.get(i).equals("fail"))
@@ -244,5 +252,12 @@ public class GalleryFragment extends Fragment {
                 e.printStackTrace();
             }
         }
+    }
+    public void sendDataForStatistics(){
+        MainStatistics statistics = new MainStatistics();
+        int failedDays = statistics.countFailedDays(db_calendar_id, db_calendar_date, db_calendar_status);
+        Log.d("statistics", "Failed: " + failedDays);
+        int completedDays = statistics.countCompletedDays(db_calendar_id, db_calendar_date, db_calendar_status);
+        Log.d("statistics", "Done: " + completedDays);
     }
 }
