@@ -1,3 +1,10 @@
+# v0.3.0(Mar 12 2022)
+   - ## **_Changes_**
+     - **_Statistics_** are now Available!
+
+  - ## **_Bug Fixes_**
+     - Adding a lot of Dates is now **_Optimized_**
+
 # v0.2.1(Mar 11 2022)
    - ## **_Changes_**
      - **_Selected Days_** are now **_Shown_** in the **_Action Bar_**
