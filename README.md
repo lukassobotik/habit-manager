@@ -15,6 +15,13 @@ It is full of bugs and is not working as it should have
 
 
 # Changes:
+- ## v0.3.0
+     - ### **_Changes_**
+       - **_Statistics_** are now Available!
+
+    - ### **_Bug Fixes_**
+       - Adding a lot of Dates is now **_Optimized_**
+
 - ## v0.2.1
      - ### **_Changes_**
        - **_Selected Days_** are now **_Shown_** in the **_Action Bar_**
