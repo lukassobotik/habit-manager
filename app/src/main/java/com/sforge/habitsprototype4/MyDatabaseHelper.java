@@ -21,7 +21,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     public static final String TAG = "tag";
     public static final String REPEAT = "repeat";
 
-    MyDatabaseHelper(@Nullable Context context) {
+    public MyDatabaseHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
     }
@@ -55,7 +55,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         else
             Toast.makeText(context, "Success! " + result, Toast.LENGTH_SHORT).show();
     }
-    Cursor readAllData(){
+    public Cursor readAllData(){
         String query = "SELECT * FROM " + TABLE_NAME;
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -65,7 +65,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         }
         return cursor;
     }
-    void updateData(String row_id,String name, String tag, String repeat){
+    public void updateData(String row_id,String name, String tag, String repeat){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
@@ -79,7 +79,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         else
             Toast.makeText(context, "Success! " + result, Toast.LENGTH_SHORT).show();
     }
-    void deleteOneRow(String row_id){
+    public void deleteOneRow(String row_id){
         SQLiteDatabase db = this.getWritableDatabase();
         long result = db.delete(TABLE_NAME, "_id=?", new String[]{row_id});
         if(result == -1)

@@ -35,6 +35,7 @@ import com.prolificinteractive.materialcalendarview.CalendarMode;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 import com.sforge.habitsprototype4.databinding.ActivityMain2Binding;
+import com.sforge.habitsprototype4.statistics.MainStatistics;
 import com.sforge.habitsprototype4.ui.gallery.GalleryFragment;
 import com.sforge.habitsprototype4.ui.settings.SettingActivity;
 import com.sforge.habitsprototype4.ui.settings.UserSettings;
@@ -56,6 +57,7 @@ import maes.tech.intentanim.CustomIntent;
 
 public class Main2Activity extends AppCompatActivity {
     private UserSettings settings;
+    private MainStatistics statistics;
     private AppBarConfiguration mAppBarConfiguration;
 
     RecyclerView recyclerView;
@@ -100,6 +102,8 @@ public class Main2Activity extends AppCompatActivity {
         findIDs();
         databaseHelper();
         getCurrentDay();
+
+        sendDataForStatistics();
     }
 
     public void createActivityViews() {
@@ -505,5 +509,12 @@ public class Main2Activity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+    }
+    public void sendDataForStatistics(){
+        statistics = new MainStatistics();
+        int failedDays = statistics.countFailedDays(db_calendar_id, db_calendar_date, db_calendar_status);
+        Log.d("statistics", "Failed: " + failedDays);
+        int completedDays = statistics.countCompletedDays(db_calendar_id, db_calendar_date, db_calendar_status);
+        Log.d("statistics", "Done: " + completedDays);
     }
 }
