@@ -1,3 +1,17 @@
+# v0.31.0(Apr 13 2022)
+- ## **_Changes_**
+  - **_Quotes & Counter_** Fragments are in the Navigation Drawer (Not Implemented Yet)
+  - When **_All Days_** are Selected to **_Repeat Every day_** it says **_Every day_**
+  - Indication that shows if Habits are **_Done or Failed_** is redesigned
+  - "Show Month Calendar" & "Show All Habits" in different fragments than Home are hidden
+  - **_Ability To Switch_** amount of **_Month Loads Per Swipe!_**
+  - **_Ability To Switch_** load times of **_Decorated Days_**
+
+- ## **_Bug Fixes_**
+  - Loading a lot of Dates is now **_Optimized_** by loading only a **_Selected Amount_** of Days per **_Swipe and Load_**
+  - Fixed an issue where some fragments **_Weren't Highlighted_** in the **_Navigation Drawer_**
+  - Fixed an issue where on small devices **_Setting Text_** could have **_Overlapped_** on/off Switches in **_Setting Activity_**
+
 # v0.3.0(Mar 12 2022)
    - ## **_Changes_**
      - **_Statistics_** are now Available!
