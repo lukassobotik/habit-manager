@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:ignore="HardcodedText"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/dialog_one_second"
+        style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="500 Milliseconds"
+        android:textColor="@color/color_primary"
+        android:textAlignment="textStart"
+        android:textAllCaps="false">
+    </Button>
+    <Button
+        android:id="@+id/dialog_two_seconds"
+        style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="750 Milliseconds"
+        android:textColor="@color/color_primary"
+        android:textAlignment="textStart"
+        android:textAllCaps="false">
+    </Button>
+    <Button
+        android:id="@+id/dialog_three_seconds"
+        style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="1 Second"
+        android:textColor="@color/color_primary"
+        android:textAlignment="textStart"
+        android:textAllCaps="false">
+    </Button>
+    <Button
+        android:id="@+id/dialog_four_seconds"
+        style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="2 Seconds"
+        android:textColor="@color/color_primary"
+        android:textAlignment="textStart"
+        android:textAllCaps="false">
+    </Button>
+
+</LinearLayout>

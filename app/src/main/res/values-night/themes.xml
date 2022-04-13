@@ -18,10 +18,8 @@
         <item name="android:actionMenuTextColor">@color/white</item>
     </style>
 
-    <style name="Theme.AppCompat.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
+
+    <!-- Theme -->
     <style name="themeBackground">
         <item name="android:background">@drawable/layout_bg</item>
         <item name="android:backgroundTint">@color/dark_grey</item>
@@ -32,17 +30,38 @@
         <item name="android:backgroundTint">@color/dark_grey</item>
         <item name="mcv_dateTextAppearance">@color/white</item>
     </style>
-
     <style name="theme_text">
         <item name="android:textColor">@color/dark_on_background</item>
     </style>
+    <style name="setting_category">
+        <item name="android:textColor">@color/color_primary</item>
+    </style>
 
+    <!-- Calendar -->
     <style name="weekday_buttons">
         <item name="android:background">@drawable/circle_button</item>
         <item name="android:backgroundTint">@color/dark_grey</item>
         <item name="android:state_pressed">true</item>
     </style>
+    <style name="CalendarAllDays">
+        <item name="android:textColor">@color/dark_on_background</item>
+    </style>
+    <style name="CalendarDayToday">
+        <item name="android:textColor">@color/dark_on_background</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 
+    <!-- Animations -->
+    <style name="DialogAnimation">
+        <item name="android:windowEnterAnimation">@android:anim/slide_in_left</item>
+        <item name="android:windowExitAnimation">@android:anim/slide_out_right</item>
+    </style>
+
+    <!-- App Bar -->
+    <style name="Theme.AppCompat.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
     <style name="ActionBar">
         <item name="background">@color/dark_grey</item>
     </style>

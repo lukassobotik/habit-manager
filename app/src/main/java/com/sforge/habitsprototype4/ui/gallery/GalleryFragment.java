@@ -24,6 +24,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateLongClickListener;
+import com.sforge.habitsprototype4.Main2Activity;
 import com.sforge.habitsprototype4.MyDatabaseHelper2;
 import com.sforge.habitsprototype4.R;
 import com.sforge.habitsprototype4.SelectionEventDecorator;
@@ -149,8 +150,8 @@ public class GalleryFragment extends Fragment {
             calendarDatabaseHelper();
             //loadCalendarDays();
 
-            invalidateSelectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.transparent), dateDays[0]);
-            selectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.calendar_done), dateDays[0]);
+            invalidateSelectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.transparent), dateDays[0], getActivity());
+            selectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.calendar_done), dateDays[0], getActivity());
 
             MyDatabaseHelper2 MyDB2 = new MyDatabaseHelper2(getContext());
 
@@ -195,9 +196,8 @@ public class GalleryFragment extends Fragment {
 
             calendarDatabaseHelper();
             //loadCalendarDays();
-
-            invalidateSelectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.transparent), dateDays[0]);
-            selectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.calendar_failed), dateDays[0]);
+            invalidateSelectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.transparent), dateDays[0], getActivity());
+            selectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.calendar_failed), dateDays[0], getActivity());
 
             MyDatabaseHelper2 MyDB2 = new MyDatabaseHelper2(getContext());
 
@@ -242,11 +242,11 @@ public class GalleryFragment extends Fragment {
                 Date loadDate = formatter.parse(edit);
                 CalendarDay loadDates = CalendarDay.from(loadDate);
                 Collection<CalendarDay> previousDates = Collections.singleton(loadDates);
-                SelectionEventDecorator previousSelectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.calendar_done), previousDates);
+                SelectionEventDecorator previousSelectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.calendar_done), previousDates, getActivity());
                 if(db_calendar_status.get(i).equals("done"))
-                    previousSelectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.calendar_done), previousDates);
+                    previousSelectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.calendar_done), previousDates, getActivity());
                 else if(db_calendar_status.get(i).equals("fail"))
-                    previousSelectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.calendar_failed), previousDates);
+                    previousSelectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.calendar_failed), previousDates, getActivity());
                 mcv.addDecorators(previousSelectionEventDecorator);
             } catch (ParseException e) {
                 e.printStackTrace();

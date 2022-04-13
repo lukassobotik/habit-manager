@@ -62,12 +62,22 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
         }
 
         String item = String.valueOf(items);
+        String everydayText;
         item = item.substring(1, item.length() - 1);
+
+        if(item.equals("SU, MO, TU, WE, TH, FR, SA"))
+            everydayText = "Every day";
+        else if (item.equals("SU, SA"))
+            everydayText = "Weekends";
+        else if (item.equals("MO, TU, WE, TH, FR"))
+            everydayText = "Work Days";
+        else
+            everydayText = item;
 
         holder.db_id_txt.setText(String.valueOf(db_id.get(holder.getAdapterPosition())));
         holder.db_name_txt.setText(String.valueOf(db_name.get(holder.getAdapterPosition())));
         holder.db_tag_txt.setText(String.valueOf(db_tag.get(holder.getAdapterPosition())));
-        holder.db_repeat_txt.setText(item);
+        holder.db_repeat_txt.setText(everydayText);
 
         String finalItem = item;
         holder.my_row_layout.setOnClickListener(view -> {

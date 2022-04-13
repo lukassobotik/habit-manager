@@ -34,4 +34,16 @@
         android:name="com.sforge.habitsprototype4.ui.settings.SettingActivity"
         android:label="@string/menu_settings"
         tools:layout="@layout/activity_setting" />
+
+    <fragment
+        android:id="@+id/nav_quotes"
+        android:name="com.sforge.habitsprototype4.ui.quotes.QuotesFragment"
+        android:label="@string/menu_quotes"
+        tools:layout="@layout/fragment_quotes" />
+
+    <fragment
+        android:id="@+id/nav_counter"
+        android:name="com.sforge.habitsprototype4.ui.counter.CounterFragment"
+        android:label="@string/menu_counter"
+        tools:layout="@layout/fragment_counter" />
 </navigation>

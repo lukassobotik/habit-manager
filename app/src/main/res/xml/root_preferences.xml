@@ -22,11 +22,11 @@
     <PreferenceCategory
         app:title="@string/sync_header">
 
-        <SwitchPreferenceCompat
+        <SwitchPreference
             app:key="sync"
             app:title="@string/sync_title"/>
 
-        <SwitchPreferenceCompat
+        <SwitchPreference
             app:key="attachment"
             app:title="@string/attachment_title"
             app:summaryOn="@string/attachment_summary_on"

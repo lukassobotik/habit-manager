@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Repeaty</string>
-    <string name="app_version">v0.3.0</string>
+    <string name="app_version">v0.31.0</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -15,6 +15,8 @@
     <string name="menu_statistics">Statistics</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_logout">Logout</string>
+    <string name="menu_quotes">Quotes</string>
+    <string name="menu_counter">Counter</string>
     <string name="title_activity_settings">SettingsActivity</string>
 
     <!-- Preference Titles -->

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:showIn="navigation_view">
+    tools:showIn="navigation_view"
+    tools:ignore="HardcodedText">
 
     <group android:checkableBehavior="single">
         <item
@@ -21,9 +22,32 @@
             android:icon="@drawable/ic_baseline_settings_24"
             android:title="@string/menu_settings"
             android:visible="false"/>
-        <item
-            android:id="@+id/nav_logout"
-            android:icon="@drawable/ic_baseline_login_24"
-            android:title="@string/menu_logout" />
+        <item android:title="Other">
+            <menu>
+                <group android:checkableBehavior="single">
+                    <item
+                        android:id="@+id/nav_quotes"
+                        android:icon="@drawable/ic_menu_quote"
+                        android:title="@string/menu_quotes" />
+                    <item
+                        android:id="@+id/nav_counter"
+                        android:icon="@drawable/ic_menu_counter"
+                        android:title="@string/menu_counter" />
+                </group>
+            </menu>
+        </item>
+
+        <item android:title="Account">
+            <menu>
+                <group android:checkableBehavior="single">
+                    <item
+                        android:id="@+id/nav_logout"
+                        android:icon="@drawable/ic_exit_2860"
+                        android:title="@string/menu_logout"
+                        />
+                </group>
+            </menu>
+        </item>
+
     </group>
 </menu>

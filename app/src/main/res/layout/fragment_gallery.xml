@@ -16,7 +16,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:visibility="gone"/>
 
-    <!-- Preview is disabled because mcv_dateTextAppearance is defined in themes.xml -->
     <com.prolificinteractive.materialcalendarview.MaterialCalendarView
         android:id="@+id/monthCalendarView"
         style="@style/themeBackground"
@@ -30,7 +29,8 @@
         app:mcv_firstDayOfWeek="monday"
         app:mcv_showOtherDates="all"
         app:mcv_showWeekDays="true"
-        app:mcv_weekDayTextAppearance="@style/theme_text">
+        app:mcv_weekDayTextAppearance="@style/theme_text"
+        app:mcv_dateTextAppearance="@style/CalendarAllDays">
 
     </com.prolificinteractive.materialcalendarview.MaterialCalendarView>
 </androidx.constraintlayout.widget.ConstraintLayout>

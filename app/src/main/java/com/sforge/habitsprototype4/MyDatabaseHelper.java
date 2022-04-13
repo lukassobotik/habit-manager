@@ -48,12 +48,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         cv.put(TAG, tag);
         cv.put(NAME, name);
         cv.put(REPEAT, repeat);
-        long result;
-        result = db.insert(TABLE_NAME, null, cv);
-        if(result == -1)
-            Toast.makeText(context, "Failed " + result, Toast.LENGTH_SHORT).show();
-        else
-            Toast.makeText(context, "Success! " + result, Toast.LENGTH_SHORT).show();
+
+        db.insert(TABLE_NAME, null, cv);
     }
     public Cursor readAllData(){
         String query = "SELECT * FROM " + TABLE_NAME;
@@ -73,18 +69,10 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         cv.put(TAG, tag);
         cv.put(REPEAT, repeat);
 
-        long result = db.update(TABLE_NAME, cv, "_id=?", new String[]{row_id});
-        if(result == -1)
-            Toast.makeText(context, "Failed " + result, Toast.LENGTH_SHORT).show();
-        else
-            Toast.makeText(context, "Success! " + result, Toast.LENGTH_SHORT).show();
+        db.update(TABLE_NAME, cv, "_id=?", new String[]{row_id});
     }
     public void deleteOneRow(String row_id){
         SQLiteDatabase db = this.getWritableDatabase();
-        long result = db.delete(TABLE_NAME, "_id=?", new String[]{row_id});
-        if(result == -1)
-            Toast.makeText(context, "Failed " + result, Toast.LENGTH_SHORT).show();
-        else
-            Toast.makeText(context, "Success! " + result, Toast.LENGTH_SHORT).show();
+        db.delete(TABLE_NAME, "_id=?", new String[]{row_id});
     }
 }

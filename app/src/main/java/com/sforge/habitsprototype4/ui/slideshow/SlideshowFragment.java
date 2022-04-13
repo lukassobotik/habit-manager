@@ -90,24 +90,19 @@ public class SlideshowFragment extends Fragment {
     }
 
     public void setPieView(){
-        ArrayList<PieHelper> pieHelperArrayList = new ArrayList<PieHelper>();
+        ArrayList<PieHelper> pieHelperArrayList = new ArrayList<>();
+        int total = failDays + doneDays;
 
-        failDaysPercentage = (failDays * 100) / (failDays + doneDays);
-        doneDaysPercentage = (doneDays * 100) / (failDays + doneDays);
-
-        int fullPercentage = failDaysPercentage + doneDaysPercentage;
-
-        if(fullPercentage != 100){
-            int fill = 100 - (fullPercentage);
-            int fillFailPercentage = failDaysPercentage + fill;
-            int fillDonePercentage = doneDaysPercentage + fill;
-            pieHelperArrayList.add(new PieHelper(fillDonePercentage, Color.GREEN));
-            pieHelperArrayList.add(new PieHelper(fillFailPercentage, Color.RED));
-        }
+        if(doneDays == 0 || failDays == 0)
+            pieHelperArrayList.add(new PieHelper(0, Color.alpha(1)));
         else{
-            pieHelperArrayList.add(new PieHelper(doneDaysPercentage, Color.GREEN));
-            pieHelperArrayList.add(new PieHelper(failDaysPercentage, Color.RED));
+            doneDaysPercentage = (doneDays * 100) / total;
+            failDaysPercentage = 100 - doneDaysPercentage;
+            pieHelperArrayList.add(new PieHelper(doneDaysPercentage, Color.parseColor("#0FC547")));
+            pieHelperArrayList.add(new PieHelper(failDaysPercentage, Color.parseColor("#FF4519")));
         }
+        Log.d("percentage", String.valueOf(doneDaysPercentage));
+        Log.d("percentage", String.valueOf(failDaysPercentage));
 
         pieView.setDate(pieHelperArrayList);
         pieView.selectedPie(8);

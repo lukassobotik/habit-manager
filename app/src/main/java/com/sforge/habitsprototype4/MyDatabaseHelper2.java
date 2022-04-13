@@ -46,12 +46,8 @@ public class MyDatabaseHelper2 extends SQLiteOpenHelper{
 
         cv.put(DATE, date);
         cv.put(STATUS, status);
-        long result;
-        result = db.insert(TABLE_NAME, null, cv);
-        if(result == -1)
-            Toast.makeText(context, "Failed " + result, Toast.LENGTH_SHORT).show();
-        else
-            Toast.makeText(context, "Success! " + result, Toast.LENGTH_SHORT).show();
+
+        db.insert(TABLE_NAME, null, cv);
     }
     public Cursor readAllData(){
         String query = "SELECT * FROM " + TABLE_NAME;
@@ -66,10 +62,6 @@ public class MyDatabaseHelper2 extends SQLiteOpenHelper{
 
     public void deleteOneRow(String row_id){
         SQLiteDatabase db = this.getWritableDatabase();
-        long result = db.delete(TABLE_NAME, "_id=?", new String[]{row_id});
-        if(result == -1)
-            Toast.makeText(context, "Failed " + result, Toast.LENGTH_SHORT).show();
-        else
-            Toast.makeText(context, "Success! " + result, Toast.LENGTH_SHORT).show();
+        db.delete(TABLE_NAME, "_id=?", new String[]{row_id});
     }
 }
