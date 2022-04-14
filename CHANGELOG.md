@@ -1,3 +1,10 @@
+# v0.31.1(Apr 14 2022)
+- ## **_Changes_**
+  - Added the option for **_Instant_** decoration speed
+
+- ## **_Bug Fixes_**
+  - Fixed an issue where when starting the main activity the theme **_opposite of the device default_** flashed
+
 # v0.31.0(Apr 13 2022)
 - ## **_Changes_**
   - **_Quotes & Counter_** Fragments are in the Navigation Drawer (Not Implemented Yet)
