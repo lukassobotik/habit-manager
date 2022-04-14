@@ -151,7 +151,7 @@ public class Main2Activity extends AppCompatActivity {
                 if (String.valueOf(navDestination.getLabel()).equals("Home")) {
                     findViewById(R.id.action_show_all_habits).setVisibility(View.VISIBLE);
                     findViewById(R.id.action_show_month_view).setVisibility(View.VISIBLE);
-                    activityReload();
+                    recreate();
                 }
                 if (String.valueOf(navDestination.getLabel()).equals("Calendar")) {
                     findViewById(R.id.fab).setVisibility(View.GONE);
@@ -377,13 +377,13 @@ public class Main2Activity extends AppCompatActivity {
     public void updateTheme() {
         mcv = findViewById(R.id.calendarView);
         if (settings.getCustomTheme().equals(UserSettings.DARK_THEME)) {
-            getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
             mcv.setHeaderTextAppearance(R.color.white);
             mcv.setWeekDayTextAppearance(R.color.white);
             mcv.setArrowColor(R.color.white);
             mcv.setDateTextAppearance(R.color.white);
         } else {
-            getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
             mcv.setHeaderTextAppearance(R.color.black);
             mcv.setWeekDayTextAppearance(R.color.black);
             mcv.setArrowColor(R.color.black);
@@ -607,6 +607,9 @@ public class Main2Activity extends AppCompatActivity {
             maxLoad = 93;
 
         switch(secondsToLoad){
+            case UserSettings.INSTANT:
+                delay = 0;
+                break;
             case UserSettings.HALF_SECOND:
                 delay = 500;
                 break;

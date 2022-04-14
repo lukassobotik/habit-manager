@@ -14,7 +14,7 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 
 public class SecondsToLoadDialog extends AppCompatDialogFragment {
 
-    private Button oneSec, twoSec, threeSec, fourSec;
+    private Button instant ,oneSec, twoSec, threeSec, fourSec;
     private SecondsToLoadDialogListener listener;
 
     @NonNull
@@ -27,11 +27,17 @@ public class SecondsToLoadDialog extends AppCompatDialogFragment {
 
         builder.setView(view).setTitle("Seconds To Load");
 
+        instant = view.findViewById(R.id.dialog_instant);
         oneSec = view.findViewById(R.id.dialog_one_second);
         twoSec = view.findViewById(R.id.dialog_two_seconds);
         threeSec = view.findViewById(R.id.dialog_three_seconds);
         fourSec = view.findViewById(R.id.dialog_four_seconds);
 
+        instant.setOnClickListener(view1 -> {
+            int option = 0;
+            getDialog().cancel();
+            listener.getData(option);
+        });
         oneSec.setOnClickListener(view1 -> {
             int option = 500;
             getDialog().cancel();

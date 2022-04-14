@@ -7,6 +7,16 @@
     android:orientation="vertical">
 
     <Button
+        android:id="@+id/dialog_instant"
+        style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Instant"
+        android:textColor="@color/color_primary"
+        android:textAlignment="textStart"
+        android:textAllCaps="false">
+    </Button>
+    <Button
         android:id="@+id/dialog_one_second"
         style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
         android:layout_width="match_parent"

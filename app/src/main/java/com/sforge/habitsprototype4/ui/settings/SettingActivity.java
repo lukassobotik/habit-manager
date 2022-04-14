@@ -69,6 +69,10 @@ public class SettingActivity extends AppCompatActivity implements SecondsToLoadD
     public void getData(int option) {
         StringBuilder optionString = new StringBuilder();
         switch(option){
+            case 0:
+                stringBuilder.append("INSTANT");
+                settings.setSecondsToLoad(UserSettings.INSTANT);
+                break;
             case 500:
                 stringBuilder.append(option);
                 stringBuilder.append(" MILLISECONDS");
@@ -206,6 +210,9 @@ public class SettingActivity extends AppCompatActivity implements SecondsToLoadD
 
         if(settings.getSecondsToLoad() != null){
             switch (settings.getSecondsToLoad()) {
+                case UserSettings.INSTANT:
+                    secondsOption.setText("INSTANT");
+                    break;
                 case UserSettings.HALF_SECOND:
                     secondsOption.setText("500 MILLISECONDS");
                     break;

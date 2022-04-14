@@ -16,6 +16,7 @@ public class UserSettings extends Application
     public static final String ONE_MONTH_LOAD_PER_SWIPE = "one";
     public static final String THREE_MONTHS_LOAD_PER_SWIPE = "three";
 
+    public static final String INSTANT = "instant";
     public static final String HALF_SECOND = "half a second";
     public static final String THREE_FOURTHS_OF_A_SECOND = "three fourths of a second";
     public static final String ONE_SECOND = "one second";
@@ -40,7 +41,6 @@ public class UserSettings extends Application
     public String getSecondsToLoad(){
         return secondsToLoad;
     }
-
 
     public void setCustomTheme(String customTheme)
     {
