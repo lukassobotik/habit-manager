@@ -16,6 +16,19 @@ It is full of bugs and is not working as it should have
 ___
 
 # Changes:
+
+- ## v0.32.0
+     - ### **_Changes_**
+       - Days that are **_next to each other_** are now **_Connected!_**
+       - **_Pie Charts_** now use a **_new Library_**
+       - **_Longest Streak_** is now in the **_Statistics!_**
+
+    - ### **_Bug Fixes_**
+       - Code **_Cleanup_**
+       - Fixed an issue where **_percentage lables_** weren't adding up to **_100%_**
+       - Fixed an issue where if there **_weren't days marked until today_** application crashed
+       - Fixed an issue on small screens **_Habit name in the Habit card_** could overlap **_Habit repeat text_**
+
 - ## v0.31.1
      - ### **_Changes_**
        - Added the option for **_Instant_** decoration speed
@@ -36,13 +49,5 @@ ___
      - Loading a lot of Dates is now **_Optimized_** by loading only a **_Selected Amount_** of Days per **_Swipe and Load_**
      - Fixed an issue where some fragments **_Weren't Highlighted_** in the **_Navigation Drawer_**
      - Fixed an issue where on small devices **_Setting Text_** could have **_Overlapped_** on/off Switches in **_Setting Activity_**
-
-
-- ## v0.3.0
-     - ### **_Changes_**
-       - **_Statistics_** are now Available!
-
-    - ### **_Bug Fixes_**
-       - Adding a lot of Dates is now **_Optimized_**
 
   - # [Full Change Log](CHANGELOG.md)
