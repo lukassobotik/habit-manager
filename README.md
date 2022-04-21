@@ -1,17 +1,19 @@
-![App icon](https://github.com/PuckyEU/habit-manager/blob/3911828519e92642e7890235b339b39a03d14835/app/src/main/ic_launcher-playstore.png)
+![App icon](https://github.com/PuckyEU/habit-manager/blob/master/app/src/main/ic_launcher-playstore.png)
 
 # Repeaty
-Repeaty is a android application that uses a databases to store habits and selected dates.
+Repeaty is an android application to **Track and Manage** your **_Habits_**.
 
 # Features
 - **_Dark_** or **_Light_** Theme
-- Ability to set first day of week in the calendar to **_Monday_** or **_Sunday_**
+- Ability to set the **_First Day of the Week_**
 - Calendar can be viewed in **_Weeks_** or in **_Months_**
 - **_All_** data is stored in **_Databases_**
 - Can **_add, remove_** and **_edit_** all habits
+- **_Statistics_**
+- **_Done Day Streaks_**
+- **_Performance_** settings
 
-# Note:
-It is full of bugs and is not working as it should have
+- ## To View all The _Features_ or _Bugfixes_ check the [**_Todo List_**](https://github.com/users/PuckyEU/projects/1/views/2)
 
 ___
 
