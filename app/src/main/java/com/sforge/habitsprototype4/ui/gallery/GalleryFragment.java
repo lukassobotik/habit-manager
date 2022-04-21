@@ -29,11 +29,15 @@ import com.sforge.habitsprototype4.MyDatabaseHelper2;
 import com.sforge.habitsprototype4.R;
 import com.sforge.habitsprototype4.SelectionEventDecorator;
 import com.sforge.habitsprototype4.databinding.FragmentGalleryBinding;
+import com.sforge.habitsprototype4.entity.CalendarLibrary;
+import com.sforge.habitsprototype4.entity.CalendarStatus;
 import com.sforge.habitsprototype4.statistics.MainStatistics;
 import com.sforge.habitsprototype4.ui.settings.UserSettings;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -48,7 +52,10 @@ public class GalleryFragment extends Fragment {
     MaterialCalendarView mcv;
     View root;
     MyDatabaseHelper2 myDB2;
+
+    List<CalendarLibrary> calendarEntities = new ArrayList<>();
     ArrayList<String> db_calendar_id, db_calendar_date, db_calendar_status;
+
     private SelectionEventDecorator selectionEventDecorator;
     private SelectionEventDecorator invalidateSelectionEventDecorator;
     private String fdof = "monday";
@@ -115,9 +122,16 @@ public class GalleryFragment extends Fragment {
     }
 
     public void storeCalendarDataInArrays() {
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("E MMM dd HH:mm:ss O yyyy");
+
         Cursor cursor = myDB2.readAllData();
         if (cursor.getCount() != 0) {
             while (cursor.moveToNext()) {
+                calendarEntities.add(new CalendarLibrary(
+                        cursor.getInt(0),
+                        LocalDate.parse(cursor.getString(1), formatter),
+                        CalendarStatus.valueOf(cursor.getString(2))));
+
                 db_calendar_id.add(cursor.getString(0));
                 db_calendar_date.add(cursor.getString(1));
                 db_calendar_status.add(cursor.getString(2));
@@ -255,9 +269,9 @@ public class GalleryFragment extends Fragment {
     }
     public void sendDataForStatistics(){
         MainStatistics statistics = new MainStatistics();
-        int failedDays = statistics.countFailedDays(db_calendar_id, db_calendar_date, db_calendar_status);
+        int failedDays = statistics.countFailedDays(calendarEntities);
         Log.d("statistics", "Failed: " + failedDays);
-        int completedDays = statistics.countCompletedDays(db_calendar_id, db_calendar_date, db_calendar_status);
+        int completedDays = statistics.countCompletedDays(calendarEntities);
         Log.d("statistics", "Done: " + completedDays);
     }
 }

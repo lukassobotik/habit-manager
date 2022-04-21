@@ -10,7 +10,7 @@ android {
         minSdk 26
         targetSdk 32
         versionCode 1
-        versionName "v0.31.1"
+        versionName "v0.32.0"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -51,4 +51,5 @@ dependencies {
     implementation 'com.github.hajiyevelnur92:intentanimation:1.0'
     implementation 'com.github.prolificinteractive:material-calendarview:master'
     implementation 'im.dacer:AndroidCharts:1.0.4'
+    implementation 'com.github.Taosif7:RingChartLib:master'
 }

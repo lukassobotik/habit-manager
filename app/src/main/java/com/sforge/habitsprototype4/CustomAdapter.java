@@ -24,14 +24,14 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
 
     Context context;
     Activity activity;
-    private final ArrayList db_id;
-    private final ArrayList db_name;
-    private final ArrayList db_tag;
-    private final ArrayList db_repeat;
+    private final List db_id;
+    private final List db_name;
+    private final List db_tag;
+    private final List db_repeat;
 
     Animation translate_anim;
 
-    CustomAdapter(Context context, Activity activity, ArrayList db_id, ArrayList db_name, ArrayList db_tag, ArrayList db_repeat){
+    CustomAdapter(Context context, Activity activity, List db_id, List db_name, List db_tag, List db_repeat){
         this.context = context;
         this.activity = activity;
         this.db_id = db_id;

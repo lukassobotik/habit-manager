@@ -6,14 +6,10 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -37,15 +34,22 @@ import com.google.android.material.snackbar.Snackbar;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.CalendarMode;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
-import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
-import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
 import com.sforge.habitsprototype4.databinding.ActivityMain2Binding;
+import com.sforge.habitsprototype4.entity.CalendarLibrary;
+import com.sforge.habitsprototype4.entity.CalendarStatus;
+import com.sforge.habitsprototype4.entity.ConnectedDays;
+import com.sforge.habitsprototype4.entity.ConnectedTag;
 import com.sforge.habitsprototype4.statistics.MainStatistics;
 import com.sforge.habitsprototype4.ui.settings.SettingActivity;
 import com.sforge.habitsprototype4.ui.settings.UserSettings;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -71,9 +75,11 @@ public class Main2Activity extends AppCompatActivity {
 
     MyDatabaseHelper myDB;
     MyDatabaseHelper2 myDB2;
-    ArrayList<String> db_id, db_name, db_tag, db_repeat;
-    ArrayList<String> db_calendar_id, db_calendar_date, db_calendar_status;
-    ArrayList<String> currentHabitIds, currentHabitNames, currentHabitTags, currentHabitRepeat;
+    List<String> db_id, db_name, db_tag, db_repeat;
+    List<CalendarLibrary> calendarEntities = new ArrayList<>();
+    List<String> db_calendar_id, db_calendar_date, db_calendar_status;
+    List<String> currentHabitIds, currentHabitNames, currentHabitTags, currentHabitRepeat;
+    ConnectedDays connectedDays;
     CustomAdapter customAdapter;
 
     public String theme;
@@ -108,16 +114,15 @@ public class Main2Activity extends AppCompatActivity {
         updateTheme();
 
         loadCalendarPreferences();
-        addCalendarEvents();
         calendarDatabaseHelper();
         declareArrayLists(new Date());
+        addCalendarEvents();
+        sendDataForStatistics();
         loadCalendarDays(new Date());
 
         findIDs();
         databaseHelper();
         getCurrentDay();
-
-        sendDataForStatistics();
     }
 
     public void createActivityViews() {
@@ -408,9 +413,16 @@ public class Main2Activity extends AppCompatActivity {
         storeCalendarDataInArrays();
     }
     public void storeCalendarDataInArrays() {
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("E MMM dd HH:mm:ss O yyyy");
+
         Cursor cursor = myDB2.readAllData();
         if (cursor.getCount() != 0) {
             while (cursor.moveToNext()) {
+                calendarEntities.add(new CalendarLibrary(
+                        cursor.getInt(0),
+                        LocalDate.parse(cursor.getString(1), formatter),
+                        CalendarStatus.valueOf(cursor.getString(2))));
+
                 db_calendar_id.add(cursor.getString(0));
                 db_calendar_date.add(cursor.getString(1));
                 db_calendar_status.add(cursor.getString(2));
@@ -494,62 +506,44 @@ public class Main2Activity extends AppCompatActivity {
         @SuppressLint("SimpleDateFormat") String selDate = new SimpleDateFormat("E MMM dd").format(date);
         Objects.requireNonNull(getSupportActionBar()).setTitle(selDate);
     }
-
-    @SuppressWarnings("all")
+    @SuppressWarnings("deprecation")
     private void addCalendarEvents() {
         mcv = findViewById(R.id.calendarView);
-        final String DONE = "done";
-        final String FAIL = "fail";
-        final String SKIP = "skip";
 
         java.util.Date todayDate = new java.util.Date();
         todayDate.setHours(0);
         todayDate.setMinutes(0);
         todayDate.setSeconds(0);
-        CalendarDay calendarDayTodayDate = CalendarDay.from(todayDate);
-        final Collection<CalendarDay>[] dateDays = new Collection[]{Collections.singleton(calendarDayTodayDate)};
 
         mcv.setSelectionMode(MaterialCalendarView.SELECTION_MODE_SINGLE);
 
-        ArrayList<String> selectedDay = new ArrayList<>();
-        ArrayList<CalendarDay> selectedDays = new ArrayList<>();
+        mcv.setOnDateChangedListener((widget, date, selected) -> {
+            Date selDate = date.getDate();
+            int weekDay = selDate.getDay();
+            showSelectedDaysHabit(weekDay);
+            setSelectedDayTitle(selDate);
+        });
 
-        mcv.setOnDateChangedListener(new OnDateSelectedListener() {
-            @SuppressWarnings("deprecation")
-            @Override
-            public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
-                java.util.Date selDate = date.getDate();
-                int weekDay = selDate.getDay();
-                showSelectedDaysHabit(weekDay);
-                setSelectedDayTitle(selDate);
+        mcv.setOnTitleClickListener(view -> {
+            if (weekMode[0]) {
+                weekMode[0] = false;
+                mcv.state().edit().setCalendarDisplayMode(CalendarMode.WEEKS).setShowWeekDays(true).commit();
+            } else {
+                weekMode[0] = true;
+                mcv.state().edit().setCalendarDisplayMode(CalendarMode.MONTHS).setShowWeekDays(true).commit();
             }
         });
 
-        mcv.setOnTitleClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (weekMode[0] == true) {
-                    weekMode[0] = false;
-                    mcv.state().edit().setCalendarDisplayMode(CalendarMode.WEEKS).setShowWeekDays(true).commit();
-                } else if (weekMode[0] == false) {
-                    weekMode[0] = true;
-                    mcv.state().edit().setCalendarDisplayMode(CalendarMode.MONTHS).setShowWeekDays(true).commit();
-                }
-            }
-        });
-
-        mcv.setOnMonthChangedListener(new OnMonthChangedListener() {
-            @Override
-            public void onMonthChanged(MaterialCalendarView materialCalendarView, CalendarDay calendarDay) {
-                Date date = calendarDay.getDate();
-                loadCalendarDays(date);
-            }
+        mcv.setOnMonthChangedListener((materialCalendarView, calendarDay) -> {
+            Date date = calendarDay.getDate();
+            loadCalendarDays(date);
         });
     }
 
     private void declareArrayLists(Date date){
         @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("E MMM dd HH:mm:ss zzzzzzzzz yyyy");
         arrayOfDates = new Date[db_calendar_date.size()];
+        //loading string dates from the DB and adding them to an array
         for(int index = 0; index < db_calendar_date.size(); index++){
             try {
                 arrayOfDates[index] = sdf.parse(db_calendar_date.get(index));
@@ -559,15 +553,15 @@ public class Main2Activity extends AppCompatActivity {
         }
         Arrays.sort(arrayOfDates);
         dates = new String[arrayOfDates.length];
+        //loading sorted days to an array of string dates
         for(int index = 0; index < db_calendar_date.size(); index++){
             dates[index] = sdf.format(arrayOfDates[index]);
         }
-
+        //formatting the array of sorted string dates
         @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf2 = new SimpleDateFormat("E MMM dd yyyy");
         for(int index = 0; index < arrayOfDates.length; index++){
             dates[index] = sdf2.format(arrayOfDates[index]);
         }
-
         datesArray = new Date[db_calendar_date.size()];
         for(int index = 0; index < db_calendar_date.size(); index++){
             try {
@@ -577,6 +571,7 @@ public class Main2Activity extends AppCompatActivity {
             }
         }
         oldDates = new String[arrayOfDates.length];
+        //creating an array of formatted and sorted days
         for(int index = 0; index < arrayOfDates.length; index++){
             assert datesArray[index] != null;
             oldDates[index] = sdf2.format(datesArray[index]);
@@ -601,11 +596,14 @@ public class Main2Activity extends AppCompatActivity {
         mcv = findViewById(R.id.calendarView);
         int maxLoad;
         int delay;
+
+        //amount of days it loads per load or swipe set from the settings
         if(monthLoadsPerSwipe.equals("one"))
             maxLoad = 31;
         else
             maxLoad = 93;
 
+        //amount of seconds it takes to decorate the days set from the settings
         switch(secondsToLoad){
             case UserSettings.INSTANT:
                 delay = 0;
@@ -626,33 +624,62 @@ public class Main2Activity extends AppCompatActivity {
 
         formatDateSwipeAction(date);
 
-        //previous dates
-        int match = -1;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        date = calendar.getTime();
+        //precaution if current date isn't decorated
+        if(!db_calendar_date.isEmpty()){
+            if(!db_calendar_date.contains(String.valueOf(date))){
+                int index = 0;
+                for(int i = 1; i < arrayOfDates.length; i++){
+                    Instant instant = date.toInstant();
+                    instant = instant.minus(i, ChronoUnit.DAYS);
+                    Date minusDate = Date.from(instant);
+                    if(Arrays.asList(arrayOfDates).contains(minusDate)){
+                        index = i;
+                        break;
+                    }
+                }
+                @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("E MMM dd HH:mm:ss zzzzzzzzz yyyy");
+                try{
+                    Date formattedDate = sdf.parse(db_calendar_date.get(index));
+                    formatDateSwipeAction(formattedDate);
+                } catch (Exception ignore){
+                    throw new RuntimeException("Failed to Find old Dates");
+                }
+            }
+        }
+
+        //decoration of 31 or 93 previous dates
+        int match;
         for(int index = 0; index < db_calendar_date.size(); index++){
             if(arrayOfDates[index].equals(formatDate)){
                 match = index;
+                if(index + 1 == db_calendar_date.size())
+                    break;
                 final int[] matchingIndex = {match + 1};
                 for (int i = 0; i < maxLoad; i++){
                     Handler handler = new Handler();
-                    handler.postDelayed(() -> {
-                        matchingIndex[0] = runPreviousDatesLoading(matchingIndex[0]);
-                    }, delay);
+                    handler.postDelayed(() -> matchingIndex[0] = runPreviousDatesLoading(matchingIndex[0]), delay);
                 }
                 break;
             }
         }
 
-        //future dates
-        int match1 = -1;
+        //decoration of 31 or 93 future dates
+        int match1;
         for(int index = 0; index < db_calendar_date.size(); index++){
             if(arrayOfDates[index].equals(formatDate)){
                 match1 = index;
+                if(index + 1 == db_calendar_date.size())
+                    break;
                 final int[] matchingIndex = {match1 + 1};
                 for (int i = 0; i < maxLoad; i++){
                     Handler handler = new Handler();
-                    handler.postDelayed(() -> {
-                        matchingIndex[0] = runFutureDatesLoading(matchingIndex[0]);
-                    }, delay);
+                    handler.postDelayed(() -> matchingIndex[0] = runFutureDatesLoading(matchingIndex[0]), delay);
                 }
                 break;
             }
@@ -663,11 +690,11 @@ public class Main2Activity extends AppCompatActivity {
         int index1 = oldDatesList.indexOf(dates[matchingIndex]);
         CalendarDay calendarDay = CalendarDay.from(arrayOfDates[matchingIndex]);
         Collection<CalendarDay> previousDates = Collections.singleton(calendarDay);
-        SelectionEventDecorator previousSelectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.transparent), previousDates, this);
+        SelectionEventDecorator previousSelectionEventDecorator = new SelectionEventDecorator(ContextCompat.getColor(getApplicationContext(), R.color.transparent), previousDates, this);
         if(db_calendar_status.get(index1).equals("done"))
-            previousSelectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.calendar_done), previousDates, this);
+            previousSelectionEventDecorator = new SelectionEventDecorator(ContextCompat.getColor(getApplicationContext(), R.color.calendar_done), previousDates, this);
         else if(db_calendar_status.get(index1).equals("fail"))
-            previousSelectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.calendar_failed), previousDates, this);
+            previousSelectionEventDecorator = new SelectionEventDecorator(ContextCompat.getColor(getApplicationContext(), R.color.calendar_failed), previousDates, this);
         if(!decoratedDates.contains(calendarDay))
             mcv.addDecorators(previousSelectionEventDecorator);
         decoratedDates.add(calendarDay);
@@ -679,11 +706,11 @@ public class Main2Activity extends AppCompatActivity {
         int index1 = oldDatesList.indexOf(dates[matchingIndex]);
         CalendarDay calendarDay = CalendarDay.from(arrayOfDates[matchingIndex]);
         Collection<CalendarDay> previousDates = Collections.singleton(calendarDay);
-        SelectionEventDecorator previousSelectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.transparent), previousDates, this);
+        SelectionEventDecorator previousSelectionEventDecorator = new SelectionEventDecorator(ContextCompat.getColor(getApplicationContext(), R.color.transparent), previousDates, this);
         if(db_calendar_status.get(index1).equals("done"))
-            previousSelectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.calendar_done), previousDates, this);
+            previousSelectionEventDecorator = new SelectionEventDecorator(ContextCompat.getColor(getApplicationContext(), R.color.calendar_done), previousDates, this);
         else if(db_calendar_status.get(index1).equals("fail"))
-            previousSelectionEventDecorator = new SelectionEventDecorator(getResources().getColor(R.color.calendar_failed), previousDates, this);
+            previousSelectionEventDecorator = new SelectionEventDecorator(ContextCompat.getColor(getApplicationContext(), R.color.calendar_failed), previousDates, this);
         if(!decoratedDates.contains(calendarDay))
             mcv.addDecorators(previousSelectionEventDecorator);
         decoratedDates.add(calendarDay);
@@ -692,9 +719,72 @@ public class Main2Activity extends AppCompatActivity {
         return matchingIndex;
     }
 
+    public void returnDateConnections(ConnectedDays connectedDays){
+        List<ConnectedTag> connection = new ArrayList<>();
+        int previousId = -1;
+        boolean enable = false;
+        for(int i = 0; i < connectedDays.getDate().size(); i++){
+            int id = connectedDays.getId().get(i);
+            if(previousId != id){
+                enable = true;
+            }
+            int streak = connectedDays.getStreak().get(id);
+            int numBetween = streak - 2;
+
+            if(enable){
+                connection.add(ConnectedTag.right);
+                for(int o = 0; o < numBetween; o++){
+                    connection.add(ConnectedTag.both);
+                }
+                connection.add(ConnectedTag.left);
+            }
+
+            enable = false;
+            previousId = id;
+        }
+        decorateConnections(new ConnectedDays(connectedDays.getDate(), connectedDays.getId(), connectedDays.getId(), connection));
+    }
+
+    public void decorateConnections(ConnectedDays connectedDays) {
+        mcv = findViewById(R.id.calendarView);
+        ZoneId defaultZoneId = ZoneId.systemDefault();
+
+        List<ConnectedTag> tag = connectedDays.getTag();
+        List<LocalDate> dates = connectedDays.getDate();
+
+        ConnectionBothDecorator connectionBoth;
+        ConnectionRightDecorator connectionRight;
+        ConnectionLeftDecorator connectionLeft;
+        for(int i = 0; i < connectedDays.getDate().size(); i++) {
+            if(ConnectedTag.both.equals(tag.get(i))) {
+                CalendarDay calendarDay = CalendarDay.from(Date.from(dates.get(i).atStartOfDay(defaultZoneId).toInstant()));
+                Collection<CalendarDay> previousDates = Collections.singleton(calendarDay);
+                connectionBoth = new ConnectionBothDecorator(ContextCompat.getColor(getApplicationContext(), R.color.calendar_done), previousDates, this);
+                decoratedDates.add(calendarDay);
+                mcv.addDecorators(connectionBoth);
+            }
+            if(ConnectedTag.right.equals(tag.get(i))) {
+                CalendarDay calendarDay = CalendarDay.from(Date.from(dates.get(i).atStartOfDay(defaultZoneId).toInstant()));
+                Collection<CalendarDay> previousDates = Collections.singleton(calendarDay);
+                connectionRight = new ConnectionRightDecorator(ContextCompat.getColor(getApplicationContext(), R.color.calendar_done), previousDates, this);
+                decoratedDates.add(calendarDay);
+                mcv.addDecorators(connectionRight);
+            }
+            if(ConnectedTag.left.equals(tag.get(i))) {
+                CalendarDay calendarDay = CalendarDay.from(Date.from(dates.get(i).atStartOfDay(defaultZoneId).toInstant()));
+                Collection<CalendarDay> previousDates = Collections.singleton(calendarDay);
+                connectionLeft = new ConnectionLeftDecorator(ContextCompat.getColor(getApplicationContext(), R.color.calendar_done), previousDates, this);
+                decoratedDates.add(calendarDay);
+                mcv.addDecorators(connectionLeft);
+            }
+        }
+    }
+
     public void sendDataForStatistics(){
         MainStatistics statistics = new MainStatistics();
-        statistics.countFailedDays(db_calendar_id, db_calendar_date, db_calendar_status);
-        statistics.countCompletedDays(db_calendar_id, db_calendar_date, db_calendar_status);
+        statistics.countFailedDays(calendarEntities);
+        statistics.countCompletedDays(calendarEntities);
+        connectedDays = statistics.connectCompletedDays(calendarEntities);
+        returnDateConnections(connectedDays);
     }
 }
