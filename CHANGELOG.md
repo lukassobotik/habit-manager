@@ -1,3 +1,15 @@
+# v0.32.0(Apr 21 2022)
+- ## **_Changes_**
+  - Days that are **_next to each other_** are now **_Connected!_**
+  - **_Pie Charts_** now use a **_new Library_**
+  - **_Longest Streak_** is now in the **_Statistics!_**
+
+- ## **_Bug Fixes_**
+  - Code **_Cleanup_**
+  - Fixed an issue where **_percentage lables_** weren't adding up to **_100%_**
+  - Fixed an issue where if there **_weren't days marked until today_** application crashed
+  - Fixed an issue on small screens **_Habit name in the Habit card_** could overlap **_Habit repeat text_**
+
 # v0.31.1(Apr 14 2022)
 - ## **_Changes_**
   - Added the option for **_Instant_** decoration speed
